@@ -1,6 +1,6 @@
 import * as admin from 'firebase-admin';
 import dotenv from 'dotenv';
-import { ServiceAccount } from 'firebase-admin';
+
 dotenv.config();
 
 const serviceAccount = require('./mapazzzkey.json');

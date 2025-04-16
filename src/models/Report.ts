@@ -4,15 +4,10 @@ import { QueryDocumentSnapshot } from "firebase-admin/firestore";
 class Report
 {
     user: any;
-    async findByReport() {
-        if (!this.user?.uid) {
-            return Promise.reject({
-                code: 500,
-                message: "Usuário nao informado"
-            });
-        }
+    async find() {
+       
         const snapshot = await connectiondb.collection("reportagens")
-            .orderBy("date",'desc')
+            .orderBy("data",'desc')
             .get();
 
         return snapshot.docs.map((doc: QueryDocumentSnapshot) => {
@@ -23,5 +18,15 @@ class Report
             };
         });
     }
+
+    async findById(uid:string) {
+       
+        const snapshot = await connectiondb.collection("reportagens")
+            .doc(uid)
+            .get()
+            .then(snapshot => snapshot.data());
+        return snapshot;
+    }
+    
 }
 export default Report;

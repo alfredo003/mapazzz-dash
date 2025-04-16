@@ -1,20 +1,33 @@
-import { Response } from "express";
+import { Request, Response } from "express";
 import Report from "../models/Report";
-import { CustomRequest } from "../types/express";
 
 export class ReportController {
+    static async getAllReports(req: Request, res: Response) {
+        try {
+            const report = new Report();
+            const reports = await report.find();
+            res.status(200).json({ reports });
+        } catch (error) {
+            console.error('Error fetching reports:', error);
+            res.status(500).json({
+                error: "Internal server error",
+                message: "Failed to fetch reports"
+            });
+        }
+    }
 
-    static getAllReports(req: CustomRequest, res: Response) 
-    {
-        const report = new Report();
-        report.user = req.user;
-
-        report.findByReport().then((reports: any[]) =>{
-            res.json(reports);
-        }).catch((error: { code: number }) =>{
-            res.status(error.code).json(error);
-        })
-        
-      }
-
+    static async getReportById(req: Request, res: Response) {
+        const {uid} = req.params;
+        try {
+            const report = new Report();
+            const reports = await report.findById(uid);
+            res.status(200).json({ reports });
+        } catch (error) {
+            console.error('Error fetching reports:', error);
+            res.status(500).json({
+                error: "Internal server error",
+                message: "Failed to fetch reports"
+            });
+        }
+    }
 }

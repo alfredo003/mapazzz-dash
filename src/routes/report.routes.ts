@@ -1,10 +1,10 @@
-import { Router } from "express";
+import { RequestHandler, Router } from "express";
 import { ReportController } from "../controllers/ReportController";
-import { authenticateToken } from "../middleware/auth";
+
 
 const reportRouter = Router();
 
-reportRouter.get('/',authenticateToken,ReportController.getAllReports);
-
+reportRouter.get('/',ReportController.getAllReports as RequestHandler);
+reportRouter.get('/:uid',ReportController.getReportById as RequestHandler);
 
 export default reportRouter;
