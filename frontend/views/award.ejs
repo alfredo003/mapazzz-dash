@@ -1,0 +1,60 @@
+<div class="content">
+ <!-- Awards Page -->
+  <div id="awards-page" class="page active" >
+    <!-- Add Award Form -->
+    <div class="card" style="--card-index: 0;">
+        <div class="card-header">
+            <h3>Adicionar Novo Prêmio</h3>
+        </div>
+        <div class="card-body">
+            <form id="awardForm">
+                <div class="form-group">
+                    <label for="awardTitle">Título</label>
+                    <input type="text" id="awardTitle" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="awardDescription">Descrição</label>
+                    <textarea id="awardDescription" class="form-control" rows="5" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="awardPhoto">URL da Foto</label>
+                    <input type="url" id="awardPhoto" class="form-control" placeholder="https://example.com/image.jpg" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Adicionar Prêmio</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Awards List -->
+    <div class="card" style="--card-index: 1;">
+        <div class="card-header">
+            <h3>Lista de Prêmios</h3>
+            <div>
+                <button class="btn btn-outline btn-sm" id="refreshAwards"><i class="fas fa-sync-alt"></i> Atualizar</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="awardsTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Título</th>
+                            <th>Descrição</th>
+                            <th>Foto</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="awardsTableBody">
+                        <tr>
+                            <td colspan="5" class="loading">
+                                <div class="spinner"></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

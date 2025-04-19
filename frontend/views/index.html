@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MapaZZZ - Painel de Controle</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.css" />
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>MapaZZZ</h2>
+            </div>
+            <div class="sidebar-menu">
+                <ul>
+                    <li><a href="#dashboard" class="active" onclick="showPage('dashboard')" style="--index: 0;"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+                    <li><a href="#institutions" onclick="showPage('institutions')" style="--index: 1;"><i class="fas fa-hospital"></i> <span>Instituições</span></a></li>
+                    <li><a href="#blogs" onclick="showPage('blogs')" style="--index: 2;"><i class="fas fa-newspaper"></i> <span>Blogs</span></a></li>
+                    <li><a href="#awards" onclick="showPage('awards')" style="--index: 3;"><i class="fas fa-trophy"></i> <span>Prêmios</span></a></li>
+                    <li><a href="#risk-map" onclick="showPage('risk-map')" style="--index: 4;"><i class="fas fa-map-marked-alt"></i> <span>Mapa de Risco</span></a></li>
+                    <li><a href="#alerts" onclick="showPage('alerts')" style="--index: 5;"><i class="fas fa-exclamation-triangle"></i> <span>Alertas</span></a></li>
+                    <li><a href="#users" onclick="showPage('users')" style="--index: 6;"><i class="fas fa-users"></i> <span>Usuários</span></a></li>
+                    <li><a href="#reports" onclick="showPage('reports')" style="--index: 7;"><i class="fas fa-chart-line"></i> <span>Relatórios</span></a></li>
+                    <li><a href="#settings" onclick="showPage('settings')" style="--index: 8;"><i class="fas fa-cog"></i> <span>Configurações</span></a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <div class="header-title">
+                    <h1 id="page-title">Dashboard</h1>
+                </div>
+                <div class="user-info">
+                    <img src="./assets/img/avatar.png" alt="User">
+                    <span>Administrador</span>
+                </div>
+                <button onclick="logout()" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Sair
+                </button>
+            </div>
+            
+            <!-- Content -->
+            <div class="content">
+                <!-- Dashboard Page -->
+                <div id="dashboard-page" class="page active">
+                    <!-- Stats -->
+                    <div class="stats">
+                        <div class="stat-card" style="--stat-index: 0;">
+                            <h3>Focos Reportados</h3>
+                            <p id="totalReports">0</p>
+                            <small id="reportsChange">Carregando...</small>
+                        </div>
+                        <div class="stat-card" style="--stat-index: 1;">
+                            <h3>Alertas Ativos</h3>
+                            <p id="activeAlerts">0</p>
+                            <small id="alertsChange">Carregando...</small>
+                        </div>
+                        <div class="stat-card" style="--stat-index: 2;">
+                            <h3>Zonas de Risco</h3>
+                            <p id="riskZones">0</p>
+                            <small id="zonesChange">Carregando...</small>
+                        </div>
+                        <div class="stat-card" style="--stat-index: 3;">
+                            <h3>Usuários Ativos</h3>
+                            <p id="activeUsers">0</p>
+                            <small id="usersChange">Carregando...</small>
+                        </div>
+                    </div>
+                    
+                    <!-- Chart -->
+                    <div class="card" style="--card-index: 0;">
+                        <div class="card-header">
+                            <h3>Estatísticas de Casos por Nível de Risco</h3>
+                            <div>
+                                <button class="btn btn-outline btn-sm" id="refreshChart"><i class="fas fa-sync-alt"></i> Atualizar</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="riskChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Active Cases -->
+                    <div class="card" style="--card-index: 1;">
+                        <div class="card-header">
+                            <h3>Casos Ativos</h3>
+                            <div>
+                                <button class="btn btn-outline btn-sm" id="refreshActiveCases"><i class="fas fa-sync-alt"></i> Atualizar</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table id="activeCasesTable">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Título</th>
+                                            <th>Localização</th>
+                                            <th>Nível de Risco</th>
+                                            <th>Data</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="activeCasesTableBody">
+                                        <tr>
+                                            <td colspan="6" class="loading">
+                                                <div class="spinner"></div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Resolved Cases -->
+                    <div class="card" style="--card-index: 2;">
+                        <div class="card-header">
+                            <h3>Casos Resolvidos</h3>
+                            <div>
+                                <button class="btn btn-outline btn-sm" id="refreshResolvedCases"><i class="fas fa-sync-alt"></i> Atualizar</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table id="resolvedCasesTable">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Título</th>
+                                            <th>Localização</th>
+                                            <th>Nível de Risco</th>
+                                            <th>Data</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="resolvedCasesTableBody">
+                                        <tr>
+                                            <td colspan="6" class="loading">
+                                                <div class="spinner"></div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Institutions Page -->
+                <div id="institutions-page" class="page" style="display: none;">
+                    <!-- Add Institution Form -->
+                    <div class="card" style="--card-index: 0;">
+                        <div class="card-header">
+                            <h3>Adicionar Nova Instituição</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="institutionForm">
+                                <div class="form-group">
+                                    <label for="name">Nome da Instituição</label>
+                                    <input type="text" id="name" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="type">Tipo</label>
+                                    <select id="type" class="form-control" required>
+                                        <option value="">Selecione...</option>
+                                        <option value="hospital">Hospital</option>
+                                        <option value="clinic">Clínica</option>
+                                        <option value="health_center">Centro de Saúde</option>
+                                        <option value="ngo">ONG</option>
+                                        <option value="government">Governamental</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="address">Endereço</label>
+                                    <input type="text" id="address" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="contact">Contacto</label>
+                                    <input type="text" id="contact" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="location">Localização (Coordenadas)</label>
+                                    <input type="text" id="location" class="form-control" placeholder="Latitude, Longitude" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Adicionar Instituição</button>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <!-- Institutions List -->
+                    <div class="card" style="--card-index: 1;">
+                        <div class="card-header">
+                            <h3>Lista de Instituições</h3>
+                            <div>
+                                <button class="btn btn-outline btn-sm" id="refreshInstitutions"><i class="fas fa-sync-alt"></i> Atualizar</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table id="institutionsTable">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Nome</th>
+                                            <th>Tipo</th>
+                                            <th>Endereço</th>
+                                            <th>Contacto</th>
+                                            <th>Coordenadas</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="institutionsTableBody">
+                                        <tr>
+                                            <td colspan="7" class="loading">
+                                                <div class="spinner"></div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Blogs Page -->
+                <div id="blogs-page" class="page" style="display: none;">
+                    <!-- Add Blog Form -->
+                    <div class="card" style="--card-index: 0;">
+                        <div class="card-header">
+                            <h3>Adicionar Novo Blog</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="blogForm">
+                                <div class="form-group">
+                                    <label for="blogTitle">Título</label>
+                                    <input type="text" id="blogTitle" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="blogDescription">Descrição</label>
+                                    <textarea id="blogDescription" class="form-control" rows="5" required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="blogPhoto">URL da Foto</label>
+                                    <input type="url" id="blogPhoto" class="form-control" placeholder="https://example.com/image.jpg" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Adicionar Blog</button>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <!-- Blogs List -->
+                    <div class="card" style="--card-index: 1;">
+                        <div class="card-header">
+                            <h3>Lista de Blogs</h3>
+                            <div>
+                                <button class="btn btn-outline btn-sm" id="refreshBlogs"><i class="fas fa-sync-alt"></i> Atualizar</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table id="blogsTable">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Título</th>
+                                            <th>Descrição</th>
+                                            <th>Foto</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="blogsTableBody">
+                                        <tr>
+                                            <td colspan="5" class="loading">
+                                                <div class="spinner"></div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Awards Page -->
+                <div id="awards-page" class="page" style="display: none;">
+                    <!-- Add Award Form -->
+                    <div class="card" style="--card-index: 0;">
+                        <div class="card-header">
+                            <h3>Adicionar Novo Prêmio</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="awardForm">
+                                <div class="form-group">
+                                    <label for="awardTitle">Título</label>
+                                    <input type="text" id="awardTitle" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="awardDescription">Descrição</label>
+                                    <textarea id="awardDescription" class="form-control" rows="5" required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="awardPhoto">URL da Foto</label>
+                                    <input type="url" id="awardPhoto" class="form-control" placeholder="https://example.com/image.jpg" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Adicionar Prêmio</button>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <!-- Awards List -->
+                    <div class="card" style="--card-index: 1;">
+                        <div class="card-header">
+                            <h3>Lista de Prêmios</h3>
+                            <div>
+                                <button class="btn btn-outline btn-sm" id="refreshAwards"><i class="fas fa-sync-alt"></i> Atualizar</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table id="awardsTable">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Título</th>
+                                            <th>Descrição</th>
+                                            <th>Foto</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="awardsTableBody">
+                                        <tr>
+                                            <td colspan="5" class="loading">
+                                                <div class="spinner"></div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Risk Map Page -->
+                <div id="risk-map-page" class="page" style="display: none;">
+                    <!-- Map -->
+                    <div class="card" style="--card-index: 0;">
+                        <div class="card-header">
+                            <h3>Mapa de Calor de Focos de Malária</h3>
+                            <div>
+                                <button class="btn btn-outline btn-sm" id="refreshMap"><i class="fas fa-sync-alt"></i> Atualizar</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="map"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Placeholder Pages -->
+                <div id="alerts-page" class="page" style="display: none;">
+                    <div class="card" style="--card-index: 0;">
+                        <div class="card-header">
+                            <h3>Alertas</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>Funcionalidade de Alertas em desenvolvimento.</p>
+                        </div>
+                    </div>
+                </div>
+                <div id="users-page" class="page" style="display: none;">
+                    <div class="card" style="--card-index: 0;">
+                        <div class="card-header">
+                            <h3>Usuários</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>Funcionalidade de Usuários em desenvolvimento.</p>
+                        </div>
+                    </div>
+                </div>
+                <div id="reports-page" class="page" style="display: none;">
+                    <div class="card" style="--card-index: 0;">
+                        <div class="card-header">
+                            <h3>Relatórios</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>Funcionalidade de Relatórios em desenvolvimento.</p>
+                        </div>
+                    </div>
+                </div>
+                <div id="settings-page" class="page" style="display: none;">
+                    <div class="card" style="--card-index: 0;">
+                        <div class="card-header">
+                            <h3>Configurações</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>Funcionalidade de Configurações em desenvolvimento.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Report Modal -->
+    <div id="reportModal" class="modal">
+        <div class="modal-content" tabindex="0">
+            <div class="modal-header">
+                <h3 id="modalTitle">Relatório</h3>
+                <span class="modal-close" onclick="closeModal()">×</span>
+            </div>
+            <div class="modal-body">
+                <div class="modal-image-container">
+                    <div class="spinner" id="imageSpinner"></div>
+                    <img id="modalImage" class="modal-image" src="" alt="Reportagem">
+                </div>
+                <div class="modal-details">
+                    <p style="--detail-index: 0;"><strong>Título:</strong> <span id="modalReportTitle"></span></p>
+                    <p style="--detail-index: 1;"><strong>Localização:</strong> <span id="modalLocation"></span></p>
+                    <p style="--detail-index: 2;"><strong>Nível de Risco:</strong> <span id="modalRiskLevel"></span></p>
+                    <p style="--detail-index: 3;"><strong>Data:</strong> <span id="modalDate"></span></p>
+                    <p style="--detail-index: 4;"><strong>Descrição:</strong> <span id="modalDescription"></span></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal()">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    
+    <!-- External Dependencies -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    
+    <!-- Local Script -->
+    <script src="script.js"></script>
+    <script src="handleApi.js"></script>
+</body>
+</html>

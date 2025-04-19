@@ -5,11 +5,14 @@ import * as admin from 'firebase-admin';
 interface AuthorityData {
     name: string;
     photo: string;
+    address: string;
+    location: string;
+    type:string;
     email: string;
-    tel: string;
+    contact: string;
+    idUser:string;
     resolvedCases: number;
     createdAt: Timestamp;
-    isBlocked?: boolean;
 }
 
 class Authority
@@ -41,16 +44,19 @@ class Authority
             });
 
             const docRef = await connectiondb.collection("authorities").add({
-                name: data.name,
-                email: data.email,
-                tel: data.tel,
+                name:  data.name,
+                photo: data.photo,
+                address: data.address,
+                location: data.location, 
+                type:data.type,
+                email:  data.email,
+                contact: data.contact,
+                idUser:userRecord.uid,
                 resolvedCases: 0,
-                createdAt: Timestamp.now(),
-                uid: userRecord.uid,
-                isBlocked: false
+                createdAt: Timestamp.now() 
             });
 
-            return userRecord.uid;
+            return docRef;
         } catch (error) {
             console.error('Error creating authority:', error);
             throw error;

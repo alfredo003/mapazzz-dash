@@ -12,9 +12,7 @@ class Blog
 {
 
     static async find() {
-        const snapshot = await connectiondb.collection("blog")
-            .orderBy("createdAt", 'asc')
-            .get();
+        const snapshot = await connectiondb.collection("blog").get();
 
         return snapshot.docs.map((doc: QueryDocumentSnapshot) => ({
             ...doc.data(),
@@ -29,7 +27,7 @@ class Blog
         return doc.data();
     }
 
-    async create(data: Omit<BlogData, 'createdAt' | 'resolvedCases'>) {
+    async create(data: Omit<BlogData, 'createdAt'>) {
         try {
             const docRef = await connectiondb.collection("blog").add({
                 body: data.content,
@@ -37,6 +35,7 @@ class Blog
                 title: data.title,
             });
 
+            return docRef;
         } catch (error) {
             console.error('Error creating authority:', error);
             throw error;

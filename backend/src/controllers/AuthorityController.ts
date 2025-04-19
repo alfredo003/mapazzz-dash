@@ -31,9 +31,9 @@ export class AuthorityController {
 
     static async create(req: Request, res: Response) {
         try {
-            const { name, photo, email, tel,password } = req.body;
+            const { name, email, type, address, location, contact } = req.body;
             
-            if (!name || !email || !tel || !password) {
+            if (!name || !email || !contact || !type || !address || !location) {
                 return res.status(400).json({
                     error: "Missing required fields",
                     message: "Name, email and tel are required"
@@ -43,10 +43,14 @@ export class AuthorityController {
             const authority = new Authority();
             const authorityId = await authority.create({
                 name,
-                photo: photo || "",
+                photo:"",
+                address,
+                location,
+                type,
                 email,
-                tel,
-                password
+                contact,
+                password:"123456",
+                idUser: ""
             });
 
             res.status(201).json({
@@ -63,21 +67,4 @@ export class AuthorityController {
         }
     }
 
-    static async block(req: Request, res: Response) {
-        const { uid } = req.params;
-        try {
-            const authority = new Authority();
-            await authority.block(uid);
-            
-            res.status(200).json({
-                message: "Authority blocked successfully"
-            });
-        } catch (error) {
-            console.error('Error blocking authority:', error);
-            res.status(500).json({
-                error: "Internal server error",
-                message: "Failed to block authority"
-            });
-        }
-    }
 }

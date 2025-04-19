@@ -15,6 +15,20 @@ export class ReportController {
             });
         }
     }
+    static async getAllReportsByStatus(req: Request, res: Response) {
+        const {status} = req.params;
+        try {
+            const report = new Report();
+            const reports = await report.findByStatus(status);
+            res.status(200).json({ reports });
+        } catch (error) {
+            console.error('Error fetching reports:', error);
+            res.status(500).json({
+                error: "Internal server error",
+                message: "Failed to fetch reports"
+            });
+        }
+    }
 
     static async getReportById(req: Request, res: Response) {
         const {uid} = req.params;

@@ -1,0 +1,108 @@
+<link rel="stylesheet" href="css/reports.css">
+<link rel="stylesheet" href="css/home.css">
+            <!-- Content -->
+            <div class="content">
+                <!-- Dashboard Page -->
+                <div id="dashboard-page" class="page active">
+                    <div class="stats">
+                        <div class="stat-card" style="--stat-index: 0;">
+                       
+                            <p id="totalReports"><%= statics.reports %></p>
+                            <small id="reportsChange">Total de Reportagens</small>
+                            <i class="background-icon fas fa-file-medical"></i>
+                        </div>
+                        <div class="stat-card" style="--stat-index: 1;">
+                            
+                            <p id="activeAlerts"><%= statics.authorities %></p>
+                            <small id="alertsChange">Instituições cadastrados</small>
+                            <i class="background-icon fas fa-building"></i>
+                        </div>
+                        <div class="stat-card" style="--stat-index: 2;">
+                            
+                            <p id="riskZones"><%= statics.reports %></p>
+                            <small id="zonesChange">Áreas monitoradas</small>
+                            <i class="background-icon fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="stat-card" style="--stat-index: 3;">
+                         
+                            <p id="activeUsers"><%= statics.users %></p>
+                            <small id="usersChange">utilizdors Activos</small>
+                            <i class="background-icon fas fa-users"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- Chart -->
+                    <div class="card" style="--card-index: 0;">
+                        <div class="card-header">
+                            <h3>Estatísticas de Casos por Nível de Risco</h3>
+                            <div>
+                                <button class="btn btn-outline btn-sm" id="refreshChart"><i class="fas fa-sync-alt"></i> Atualizar</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="riskChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Active Cases -->
+                    <div class="card" style="--card-index: 1;">
+                        <div class="card-header">
+                            <h3>Casos Ativos</h3>
+                            <div>
+                                <button class="btn btn-outline btn-sm" id="refreshActiveCases"><i class="fas fa-sync-alt"></i> Atualizar</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table id="activeCasesTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Título</th>
+                                            <th>Localização</th>
+                                            <th>Nível de Risco</th>
+                                            <th>Estado</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="activeCasesTableBody">
+                                        <tr class="loading-row" style="display: none;">
+                                            <td colspan="6" class="text-center">
+                                                <i class="fas fa-spinner fa-spin"></i> Carregando...
+                                            </td>
+                                        </tr>
+                                        <% if (reports && reports.length > 0) { %>
+                                            <% reports.forEach(report => { %>
+                                                <tr>
+                                                    <td><%=report.title %></td>
+                                                    <td><%=report.location %></td>
+                                                    <td>
+                                                        <span class="risk-badge risk-<%= report.riskLevel === 0 ? 'baixo' : report.riskLevel === 2 ? 'medio' : 'alto' %>">
+                                                            <%= report.riskLevel === 0 ? 'Baixo' : report.riskLevel === 2 ? 'Médio' : 'Alto' %>
+                                                        </span>
+                                                    </td>
+                                                  
+                                                    <td>
+                                                        <span class="status-badge status-<%= report.status === 'fixed' ? 'resolvido' : 'nao-resolvido' %>">
+                                                            <%= report.status === 'fixed' ? 'Resolvido' : 'Não Resolvido' %>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <button class="btn btn-outline btn-sm" onclick="viewInstitution('<%= report.uid %>')" title="Visualizar detalhes">
+                                                            <i class="fas fa-eye"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            <% }); %>
+                                        <% } else { %>
+                                            <tr>
+                                                <td colspan="6" class="text-center">Nenhuma Reportagem encontrada.</td>
+                                            </tr>
+                                        <% } %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+             

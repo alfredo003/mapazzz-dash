@@ -6,8 +6,7 @@ class Report
     user: any;
     async find() {
        
-        const snapshot = await connectiondb.collection("reportagens")
-            .orderBy("data",'desc')
+        const snapshot = await connectiondb.collection("reports")
             .get();
 
         return snapshot.docs.map((doc: QueryDocumentSnapshot) => {
@@ -19,9 +18,22 @@ class Report
         });
     }
 
+    async findByStatus(status:string) {
+        const snapshot = await connectiondb.collection("reports")
+            .where("status", "==", status)
+            .get();
+        return snapshot.docs.map((doc: QueryDocumentSnapshot) => {
+            const data = doc.data();
+            return {
+                ...data,
+                uid: doc.id
+            };
+        });
+    }
+
     async findById(uid:string) {
        
-        const snapshot = await connectiondb.collection("reportagens")
+        const snapshot = await connectiondb.collection("reports")
             .doc(uid)
             .get()
             .then(snapshot => snapshot.data());

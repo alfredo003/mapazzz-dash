@@ -1,0 +1,265 @@
+<link rel="stylesheet" href="css/reports.css">
+<div class="content">
+  <!-- Flash Messages -->
+  <% if(messages.success && messages.success.length > 0) { %>
+    <div id="success-alert" class="alert alert-success">
+      <span class="message"><%= messages.success %></span>
+      <button class="close-btn" onclick="closeAlert(this.parentElement)">&times;</button>
+    </div>
+  <% } %>
+  <% if(messages.error && messages.error.length > 0) { %>
+    <div id="error-alert" class="alert alert-danger">
+      <span class="message"><%= messages.error %></span>
+      <button class="close-btn" onclick="closeAlert(this.parentElement)">&times;</button>
+    </div>
+  <% } %>
+
+  <!-- Institutions Page -->
+   <div id="institutions-page" class="page active">
+    <!-- Add Institution Form -->
+    <div class="card" >
+        <div class="card-header">
+            <h3>Adicionar Nova Instituição</h3>
+        </div>
+        <div class="card-body">
+            <form id="institutionForm" action="/instituicoes" method="POST">
+                <div class="form-group">
+                    <label for="name">Nome da Instituição</label>
+                    <input type="text" id="name" name="name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="type">Tipo</label>
+                    <select id="type" name="type" class="form-control" required>
+                        <option value="">Selecione...</option>
+                        <option value="hospital">Hospital</option>
+                        <option value="clinic">Clínica</option>
+                        <option value="health_center">Centro de Saúde</option>
+                        <option value="ngo">ONG</option>
+                        <option value="government">Governamental</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="address">Endereço</label>
+                    <input type="text" id="address" name="address" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="text" id="email" name="email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="contact">Contacto</label>
+                    <input type="text" id="contact" name="contact" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="location">Localização (Coordenadas)</label>
+                    <input type="text" id="location" name="location" class="form-control" placeholder="Latitude, Longitude" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Adicionar Instituição</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Institutions List -->
+    <div class="card" style="--card-index: 1;">
+        <div class="card-header">
+            <h3>Lista de Instituições</h3>
+            <div>
+                <button class="btn btn-outline btn-sm" id="refreshInstitutions"><i class="fas fa-sync-alt"></i> Atualizar</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="institutionsTable">
+                    <thead>
+                        <tr>
+                            <th>Instituição</th>
+                            <th>Endereço</th>
+                            <th>Contacto</th>
+                            <th>Email</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="institutionsTableBody">
+                        <% if (institutions && institutions.length > 0) { %>
+                            <% institutions.forEach(institution => { %>
+                                <tr>
+                                    <td>
+                                        <div class="institution-info">
+                                            <div class="institution-avatar <%= institution.type %>">
+                                                <% if (institution.photoUrl) { %>
+                                                    <img src="<%= institution.photo %>" alt="<%= institution.name %>">
+                                                <% } else { %>
+                                                    <i class="fas <%= getInstitutionIcon(institution.type) %>"></i>
+                                                <% } %>
+                                            </div>
+                                            <div class="institution-details">
+                                                <div class="institution-name"><%= institution.name %></div>
+                                                <div class="institution-type"><%= formatInstitutionType(institution.type) %></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><%= institution.address %></td>
+                                    <td><%= institution.contact %></td>
+                                    <td><%= institution.email %></td>
+                                    <td>
+                                        <div class="actions-cell">
+                                            <button class="btn-action" onclick="viewInstitution('<%= institution.id %>')" title="Visualizar">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn-action" onclick="editInstitution('<%= institution.id %>')" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn-action" onclick="deleteInstitution('<%= institution.id %>')" title="Excluir">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="5" class="text-center">Nenhuma instituição encontrada.</td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<style>
+.table-responsive {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+#institutionsTable {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-bottom: 1rem;
+}
+
+#institutionsTable thead th {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    font-weight: 600;
+    color: #344767;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid #eee;
+}
+
+#institutionsTable tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #eee;
+    color: #344767;
+}
+
+#institutionsTable tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.institution-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.institution-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background-color: #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: #fff;
+    overflow: hidden;
+}
+
+.institution-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.institution-avatar.hospital { background-color: #4CAF50; }
+.institution-avatar.clinic { background-color: #2196F3; }
+.institution-avatar.health_center { background-color: #9C27B0; }
+.institution-avatar.ngo { background-color: #FF9800; }
+.institution-avatar.government { background-color: #607D8B; }
+
+.institution-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.institution-name {
+    font-weight: 600;
+    color: #344767;
+    margin-bottom: 0.25rem;
+}
+
+.institution-type {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+.badge {
+    padding: 0.5em 0.75em;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.actions-cell {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-action {
+    padding: 0.5rem;
+    border-radius: 6px;
+    border: none;
+    background-color: #f8f9fa;
+    color: #344767;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-action:hover {
+    background-color: #e9ecef;
+}
+</style>
+
+<script>
+function getInstitutionIcon(type) {
+    const icons = {
+        'hospital': 'fa-hospital',
+        'clinic': 'fa-clinic-medical',
+        'health_center': 'fa-first-aid',
+        'ngo': 'fa-hands-helping',
+        'government': 'fa-building'
+    };
+    return icons[type] || 'fa-building';
+}
+
+function formatInstitutionType(type) {
+    const types = {
+        'hospital': 'Hospital',
+        'clinic': 'Clínica',
+        'health_center': 'Centro de Saúde',
+        'ngo': 'ONG',
+        'government': 'Governamental'
+    };
+    return types[type] || type;
+}
+</script>

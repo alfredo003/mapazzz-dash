@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%- title %></title>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/message.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script>
+        function setActiveMenu() {
+            const currentPath = window.location.pathname;
+            const menuItems = document.querySelectorAll('.sidebar-menu a');
+            
+            menuItems.forEach(item => {
+                const href = item.getAttribute('href');
+                if (href === currentPath || (currentPath.includes(href) && href !== '/')) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        }
+        
+        // Call the function when the page loads
+        document.addEventListener('DOMContentLoaded', setActiveMenu);
+
+        // Add sidebar toggle functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuToggle = document.querySelector('.menu-toggle');
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.querySelector('.main-content');
+            let isSidebarCollapsed = false;
+
+            menuToggle.addEventListener('click', function() {
+                isSidebarCollapsed = !isSidebarCollapsed;
+                
+                if (isSidebarCollapsed) {
+                    sidebar.style.width = '80px';
+                    mainContent.style.marginLeft = '80px';
+                    document.querySelector('.sidebar-header h2').style.display = 'none';
+                    document.querySelectorAll('.sidebar-menu .menu-item span').forEach(span => {
+                        span.style.display = 'none';
+                    });
+                    document.querySelectorAll('.sidebar-menu .menu-item').forEach(item => {
+                        item.style.justifyContent = 'center';
+                        item.style.padding = '16px';
+                    });
+                } else {
+                    sidebar.style.width = '280px';
+                    mainContent.style.marginLeft = '280px';
+                    document.querySelector('.sidebar-header h2').style.display = 'block';
+                    document.querySelectorAll('.sidebar-menu .menu-item span').forEach(span => {
+                        span.style.display = 'inline';
+                    });
+                    document.querySelectorAll('.sidebar-menu .menu-item').forEach(item => {
+                        item.style.justifyContent = 'flex-start';
+                        item.style.padding = '14px 25px';
+                    });
+                }
+            });
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <img src="img/white-logo.png" alt="MapaZZZ Logo" class="logo">
+                <h2>MapaZZZ</h2>
+            </div>
+            <nav class="sidebar-menu">
+                <ul>
+                    <li>
+                        <a href="/home" class="menu-item" >
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/instituicoes" class="menu-item">
+                            <i class="fas fa-hospital"></i>
+                            <span>Instituições</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/blog" class="menu-item">
+                            <i class="fas fa-newspaper"></i>
+                            <span>Blogs</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/premiacoes" class="menu-item">
+                            <i class="fas fa-trophy"></i>
+                            <span>Prêmios</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/risk-map" class="menu-item" >
+                            <i class="fas fa-map-marked-alt"></i>
+                            <span>Mapa de Risco</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/reportagens" class="menu-item" >
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>Reportagens</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/users" class="menu-item">
+                            <i class="fas fa-users"></i>
+                            <span>Usuários</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/settings" class="menu-item">
+                            <i class="fas fa-cog"></i>
+                            <span>Configurações</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <div class="header-left">
+                    <button class="menu-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+                <div class="user-info">
+                    <div class="user-notifications">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">0</span>
+                    </div>
+                    <img src="img/avatar.png" alt="User Avatar" class="user-avatar">
+                    <div class="user-details">
+                        <span class="user-name">Administrador</span>
+                        <span class="user-role">Admin</span>
+                    </div>
+                    <a class="logout-btn" href="/logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Sair</span>
+                    </a>
+                </div>
+            </div>
+
+            <%- body %>
+        </div>
+    
+        <!-- Report Modal -->
+        <div id="reportModal" class="modal">
+            <div class="modal-content" tabindex="0">
+                <div class="modal-header">
+                    <h3 id="modalTitle">Relatório</h3>
+                    <span class="modal-close" onclick="closeModal()">×</span>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-image-container">
+                        <div class="spinner" id="imageSpinner"></div>
+                        <img id="modalImage" class="modal-image" src="" alt="Reportagem">
+                    </div>
+                    <div class="modal-details">
+                        <p style="--detail-index: 0;"><strong>Título:</strong> <span id="modalReportTitle"></span></p>
+                        <p style="--detail-index: 1;"><strong>Localização:</strong> <span id="modalLocation"></span></p>
+                        <p style="--detail-index: 2;"><strong>Nível de Risco:</strong> <span id="modalRiskLevel"></span></p>
+                        <p style="--detail-index: 3;"><strong>Data:</strong> <span id="modalDate"></span></p>
+                        <p style="--detail-index: 4;"><strong>Descrição:</strong> <span id="modalDescription"></span></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline" onclick="closeModal()">Fechar</button>
+                </div>
+            </div>
+        </div>
+             <!-- Scripts -->
+
+    <!-- External Dependencies -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+ <script src="/js/script.js"></script>
+ <script src="/js/message.js"></script>
+</body>
+</html>
