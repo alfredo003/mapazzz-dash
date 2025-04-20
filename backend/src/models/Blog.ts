@@ -32,7 +32,7 @@ class Blog
             const docRef = await connectiondb.collection("blog").add({
                 body: data.content,
                 imgUrl: data.imgUrl,
-                title: data.title,
+                title: data.title
             });
 
             return docRef;

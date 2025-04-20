@@ -17,7 +17,7 @@ interface AuthorityData {
 
 class Authority
 {
-    async find() {
+    async find() { 
         const snapshot = await connectiondb.collection("authorities")
             .orderBy("name", 'asc')
             .get();

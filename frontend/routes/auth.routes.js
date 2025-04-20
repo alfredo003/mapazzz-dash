@@ -49,4 +49,11 @@ authRouter.get('/logout', async (req, res) => {
     }
 });
 
+authRouter.get('/recuperar', (req, res) => {
+    res.render('forget', { 
+        title: 'MapaZZZ - Recuperar senha',
+        error: req.flash('error')
+    })
+})
+
 module.exports = authRouter;

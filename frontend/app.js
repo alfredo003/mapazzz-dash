@@ -11,12 +11,16 @@ const makeAuthenticatedRequest = require('./helpers/AuthReq');
 const app = express()
 const port = 5000
 
+app.use(express.urlencoded({ extended: true })); 
+app.use(express.json()); 
+
 app.use(helmet({
     contentSecurityPolicy: {
         directives: {
             ...helmet.contentSecurityPolicy.getDefaultDirectives(),
             "script-src": ["'self'", "'unsafe-inline'", "https://www.gstatic.com", "https://apis.google.com"],
-            "frame-src": ["'self'", "https://firebase.google.com"]
+            "frame-src": ["'self'", "https://firebase.google.com"],
+            "img-src": ["'self'", "data:", "https://res.cloudinary.com"]
         }
     }
 }))
@@ -60,7 +64,7 @@ app.get('/home', authenticateUser, async (req, res) => {
             reports: reports
         });
     } catch (error) {
-        console.error('Error fetching institutions:', error);
+       // console.error('Error fetching institutions:', error);
      
         res.render('home', { 
             title: 'Mapazzz - Painel de Controle', 
@@ -68,7 +72,8 @@ app.get('/home', authenticateUser, async (req, res) => {
             user: {
                 email: req.session.userEmail
             },
-            statics: []
+            statics: [],
+            reports: []
         });
     }
   

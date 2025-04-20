@@ -5,6 +5,8 @@ const authRouter = require('./auth.routes');
 const reportsRouter = require('./reports.routes');
 const authoritiesRouter = require('./authorities.routes');
 const userRouter = require('./user.routes');
+const riskmapRoutes = require('./riskmap.routes');
+
 const { authenticateUser } = require('../middleware/auth');
 
 const router = Router();
@@ -16,6 +18,7 @@ router.use('/blog', authenticateUser, blogsRouter);
 router.use('/reportagens', authenticateUser, reportsRouter);
 router.use('/instituicoes', authenticateUser, authoritiesRouter);
 router.use('/users', authenticateUser, userRouter);
+router.use('/mapa_risco', authenticateUser, riskmapRoutes);
 
 module.exports = router;
 

@@ -1,18 +1,212 @@
-    
-                
+<link rel="stylesheet" href="css/reports.css">
+   <style>
+        /* Estatísticas do Mapa */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.stat-card {
+    background: var(--light-color);
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-card h4 {
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.stat-card p {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+/* Filtros do Mapa */
+.filter-controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-left: 1rem;
+}
+
+.filter-controls select,
+.filter-controls input {
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--light-color);
+}
+
+.filter-controls select:focus,
+.filter-controls input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+    </style>
+                <div class="content">
                 <!-- Risk Map Page -->
-                <div id="risk-map-page" class="page" style="display: none;">
+                <div id="risk-map-page" class="page active" >
                     <!-- Map -->
+                        <!-- Estatísticas do Mapa -->
+                    <div class="card" style="--card-index: 1;">
+                        <div class="card-header">
+                            <h3>Estatísticas da Região</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="stats-grid">
+                                <div class="stat-card">
+                                    <h4>Total de Casos</h4>
+                                    <p id="totalCases">0</p>
+                                </div>
+                                <div class="stat-card">
+                                    <h4>Alto Risco</h4>
+                                    <p id="highRiskCases">0</p>
+                                </div>
+                                <div class="stat-card">
+                                    <h4>Médio Risco</h4>
+                                    <p id="mediumRiskCases">0</p>
+                                </div>
+                                <div class="stat-card">
+                                    <h4>Baixo Risco</h4>
+                                    <p id="lowRiskCases">0</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="card" style="--card-index: 0;">
                         <div class="card-header">
-                            <h3>Mapa de Calor de Focos de Malária</h3>
-                            <div>
-                                <button class="btn btn-outline btn-sm" id="refreshMap"><i class="fas fa-sync-alt"></i> Atualizar</button>
+                            <h3>Zonas de Risco</h3>
+                            <div class="filter-controls">
+                                <select id="riskLevelFilter" class="form-control">
+                                    <option value="all">Todos os níveis de risco</option>
+                                    <option value="3">Alto Risco</option>
+                                    <option value="2">Médio Risco</option>
+                                    <option value="1">Baixo Risco</option>
+                                </select>
+                                <button class="btn btn-outline btn-sm" id="refreshMap">
+                                    <i class="fas fa-sync-alt"></i> Atualizar
+                                </button>
                             </div>
                         </div>
                         <div class="card-body">
                             <div id="map"></div>
                         </div>
                     </div>
+
+                 
                 </div>
-                
+            </div>
+
+            <script>
+                // Adicionar event listeners para os filtros
+document.getElementById('riskLevelFilter').addEventListener('change', filterMap);
+document.getElementById('dateFilter').addEventListener('change', filterMap);
+
+// Função para filtrar o mapa
+function filterMap() {
+    const riskLevel = document.getElementById('riskLevelFilter').value;
+    const date = document.getElementById('dateFilter').value;
+    
+    let filteredData = [...reportsData];
+    
+    if (riskLevel !== 'all') {
+        filteredData = filteredData.filter(item => item.riskLevel === parseInt(riskLevel));
+    }
+    
+    if (date) {
+        const selectedDate = new Date(date);
+        filteredData = filteredData.filter(item => {
+            const itemDate = new Date(item.createdAt);
+            return itemDate.toDateString() === selectedDate.toDateString();
+        });
+    }
+    
+    updateMap(filteredData);
+    updateMapStats(filteredData);
+}
+
+// Função para atualizar as estatísticas do mapa
+function updateMapStats(data) {
+    const totalCases = data.length;
+    const highRiskCases = data.filter(item => item.riskLevel === 3).length;
+    const mediumRiskCases = data.filter(item => item.riskLevel === 2).length;
+    const lowRiskCases = data.filter(item => item.riskLevel === 1).length;
+    
+    document.getElementById('totalCases').textContent = totalCases;
+    document.getElementById('highRiskCases').textContent = highRiskCases;
+    document.getElementById('mediumRiskCases').textContent = mediumRiskCases;
+    document.getElementById('lowRiskCases').textContent = lowRiskCases;
+}
+
+// Modificar a função updateMap para usar cores diferentes por nível de risco
+function updateMap(data) {
+    if (!map) return;
+    
+    map.eachLayer(layer => {
+        if (layer instanceof L.Marker || layer instanceof L.CircleMarker) {
+            map.removeLayer(layer);
+        }
+    });
+    
+    const validMarkers = [];
+    data.forEach(item => {
+        if (item.latitude && item.longitude && !isNaN(parseFloat(item.latitude)) && !isNaN(parseFloat(item.longitude))) {
+            const lat = parseFloat(item.latitude);
+            const lng = parseFloat(item.longitude);
+            
+            let color;
+            switch(item.riskLevel) {
+                case 3:
+                    color = '#c62828'; // Vermelho para alto risco
+                    break;
+                case 2:
+                    color = '#ef6c00'; // Laranja para médio risco
+                    break;
+                default:
+                    color = '#2e7d32'; // Verde para baixo risco
+            }
+            
+            const opacity = item.riskLevel === 3 ? 0.8 : item.riskLevel === 2 ? 0.6 : 0.4;
+            
+            L.circleMarker([lat, lng], {
+                radius: item.riskLevel === 3 ? 12 : item.riskLevel === 2 ? 10 : 8,
+                fillColor: color,
+                color: '#000',
+                weight: 1,
+                opacity: 1,
+                fillOpacity: opacity
+            }).addTo(map).bindPopup(`
+                <div class="map-popup">
+                    <h4>${item.title || 'Sem título'}</h4>
+                    <p><strong>Local:</strong> ${item.location || 'N/A'}</p>
+                    <p><strong>Risco:</strong> <span class="risk-badge risk-${item.riskLevel === 3 ? 'alto' : item.riskLevel === 2 ? 'medio' : 'baixo'}">
+                        ${item.riskLevel === 3 ? 'Alto' : item.riskLevel === 2 ? 'Médio' : 'Baixo'}
+                    </span></p>
+                    <p><strong>Data:</strong> ${item.createdAt ? new Date(item.createdAt).toLocaleDateString() : 'N/A'}</p>
+                </div>
+            `);
+            
+            validMarkers.push([lat, lng]);
+        }
+    });
+    
+    if (validMarkers.length > 0) {
+        map.fitBounds(validMarkers);
+    } else {
+        map.setView([-8.9308, 13.2017], 12);
+    }
+}
+            </script>

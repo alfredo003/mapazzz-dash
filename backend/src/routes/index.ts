@@ -5,6 +5,7 @@ import blogRouter from './blog.routes';
 import userRouter from './user.routes';
 import statisticRouter from './statistic.routes';
 import { authenticateToken } from '../middleware/auth';
+import awardRouter from './award.routes';
 
 const routes = Router();
 
@@ -13,5 +14,6 @@ routes.use('/autoridades', authenticateToken, authorityRouter);
 routes.use('/blog', authenticateToken, blogRouter);
 routes.use('/usuarios', authenticateToken, userRouter);
 routes.use('/estatisticas', authenticateToken, statisticRouter);
+routes.use('/recompensas', authenticateToken, awardRouter);
 
 export default routes;

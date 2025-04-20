@@ -2,7 +2,7 @@ const express = require('express');
 const userRoutes = express.Router();
 
 
-userRoutes.get('/users', async(req, res) => {
+userRoutes.get('/', async(req, res) => {
 
     res.render('users', { 
         title: 'Instituições', 

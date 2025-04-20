@@ -1,60 +1,205 @@
+<link rel="stylesheet" href="css/reports.css">
+<link rel="stylesheet" href="css/award.css">
+
 <div class="content">
- <!-- Awards Page -->
-  <div id="awards-page" class="page active" >
-    <!-- Add Award Form -->
-    <div class="card" style="--card-index: 0;">
-        <div class="card-header">
-            <h3>Adicionar Novo Prêmio</h3>
-        </div>
-        <div class="card-body">
-            <form id="awardForm">
-                <div class="form-group">
-                    <label for="awardTitle">Título</label>
-                    <input type="text" id="awardTitle" class="form-control" required>
+
+  <% if(messages.success && messages.success.length > 0) { %>
+    <div id="success-alert" class="alert alert-success">
+      <span class="message"><%= messages.success %></span>
+      <button class="close-btn" onclick="closeAlert(this.parentElement)">&times;</button>
+    </div>
+  <% } %>
+  <% if(messages.error && messages.error.length > 0) { %>
+    <div id="error-alert" class="alert alert-danger">
+      <span class="message"><%= messages.error %></span>
+      <button class="close-btn" onclick="closeAlert(this.parentElement)">&times;</button>
+    </div>
+  <% } %>
+
+
+  <!-- Awards Page -->
+  <div id="awards-page" class="page active">
+ 
+    <div class="card mb-4" style="--card-index: 0;">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h3 class="mb-0">Adicionar Novo Prêmio</h3>
+        <button type="button" class="btn btn-link" id="toggleForm">
+          <i class="fas fa-chevron-down"></i>
+        </button>
+      </div>
+      <div class="card-body" id="awardFormContainer">
+        <form id="awardForm" class="needs-validation" action="/premiacoes" method="POST"  enctype="multipart/form-data">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="awardTitle" class="form-label">Nome do Prêmio</label>
+                <input type="text" id="awardTitle" name="title" class="form-control" required>
+                <div class="invalid-feedback">
+                  Por favor, insira um título para o prêmio.
                 </div>
-                <div class="form-group">
-                    <label for="awardDescription">Descrição</label>
-                    <textarea id="awardDescription" class="form-control" rows="5" required></textarea>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="awardPhoto" class="form-label">Foto</label>
+                <div class="input-group">
+                  <input type="file" id="awardPhoto" name="file" class="form-control" required>
+                  
                 </div>
-                <div class="form-group">
-                    <label for="awardPhoto">URL da Foto</label>
-                    <input type="url" id="awardPhoto" class="form-control" placeholder="https://example.com/image.jpg" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Adicionar Prêmio</button>
-            </form>
-        </div>
+                
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-group mb-3">
+            <label for="awardDescription" class="form-label">Pontos</label>
+            <input  type="number" class="form-control" max="4000" min="10"  name="points" required/>
+          </div>
+
+          <div class="form-group mb-3" id="photoPreview" style="display: none;">
+            <label class="form-label">Prévia da Foto</label>
+            <div class="preview-container">
+              <img id="previewImage" src="" width="100" height="100" alt="Prévia da foto" class="img-thumbnail">
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end gap-2">
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-plus me-2"></i>Adicionar Prêmio
+            </button>
+            <button type="reset" class="btn btn-outline-secondary">Limpar</button>
+           
+          </div>
+        </form>
+      </div>
     </div>
     
     <!-- Awards List -->
     <div class="card" style="--card-index: 1;">
-        <div class="card-header">
-            <h3>Lista de Prêmios</h3>
-            <div>
-                <button class="btn btn-outline btn-sm" id="refreshAwards"><i class="fas fa-sync-alt"></i> Atualizar</button>
-            </div>
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h3 class="mb-0">Lista de Prêmios</h3>
+        <div class="d-flex gap-2">
+          <div class="input-group">
+            <input type="text" class="form-control" id="searchAwards" placeholder="Buscar prêmios...">
+          
+          </div>
         </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table id="awardsTable">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Título</th>
-                            <th>Descrição</th>
-                            <th>Foto</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="awardsTableBody">
-                        <tr>
-                            <td colspan="5" class="loading">
-                                <div class="spinner"></div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table id="awardsTable" class="table table-hover">
+            <thead class="table-light">
+              <tr>
+                <th style="width: 15%">Foto</th>
+                <th style="width: 10%">ID</th>
+                <th style="width: 40%">Título</th>
+                <th >Pontos</th>
+                <th style="width: 15%">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="awardsTableBody">
+              <% if (awards && awards.length > 0) { %>
+                  <% awards.forEach(award => { %>
+                      <tr>
+                          <td>      
+                             <img src="<%=award.imageUrl%>" alt="<%= award.title %>" class="img-thumbnail"/>
+                          </td>
+                          <td><%= award.id %></td>
+                          <td><%= award.title %></td>
+                          <td><%= award.points %></td>
+                          <td>
+                              <div class="actions-cell">
+                                  <button class="btn btn-sm btn-light" onclick="editInstitution('<%= award.uid %>')" title="Editar">
+                                      <i class="fas fa-edit"></i>
+                                  </button>
+                                  <button class="btn btn-sm btn-light" onclick="deleteInstitution('<%= award.uid %>')" title="Excluir">
+                                      <i class="fas fa-trash"></i>
+                                  </button>
+                              </div>
+                          </td>
+                      </tr>
+                  <% }); %>
+              <% } else { %>
+                  <tr>
+                      <td colspan="5" class="text-center">Nenhum premio encontrado.</td>
+                  </tr>
+              <% } %>
+          </tbody>
+          </table>
         </div>
+        <div class="d-flex justify-content-between align-items-center mt-3">
+          <div class="text-muted" id="awardsCount">Mostrando 0 prêmios</div>
+          <nav aria-label="Navegação de prêmios">
+            <ul class="pagination mb-0" id="awardsPagination">
+              <!-- Pagination will be added dynamically -->
+            </ul>
+          </nav>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
-</div>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Form validation
+  
+
+    const photoInput = document.getElementById('awardPhoto');
+    const previewContainer = document.getElementById('photoPreview');
+    const previewImage = document.getElementById('previewImage');
+
+    // Show image preview when a file is selected
+    photoInput.addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          previewImage.src = e.target.result;
+          previewContainer.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      } else {
+        previewContainer.style.display = 'none';
+      }
+    });
+
+    const toggleButton = document.getElementById('toggleForm');
+    const formContainer = document.getElementById('awardFormContainer');
+    
+    toggleButton.addEventListener('click', function() {
+      formContainer.style.display = formContainer.style.display === 'none' ? 'block' : 'none';
+      toggleButton.querySelector('i').classList.toggle('fa-chevron-down');
+      toggleButton.querySelector('i').classList.toggle('fa-chevron-up');
+    });
+
+    // Add search functionality
+    const searchInput = document.getElementById('searchAwards');
+    const awardsTableBody = document.getElementById('awardsTableBody');
+    const rows = awardsTableBody.getElementsByTagName('tr');
+
+    searchInput.addEventListener('input', function() {
+      const searchTerm = this.value.toLowerCase();
+      
+      Array.from(rows).forEach(row => {
+        const title = row.getElementsByTagName('td')[2]?.textContent.toLowerCase() || '';
+        const id = row.getElementsByTagName('td')[1]?.textContent.toLowerCase() || '';
+        const points = row.getElementsByTagName('td')[3]?.textContent.toLowerCase() || '';
+        
+        if (title.includes(searchTerm) || id.includes(searchTerm) || points.includes(searchTerm)) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      // Update the awards count
+      const visibleRows = Array.from(rows).filter(row => row.style.display !== 'none').length;
+      document.getElementById('awardsCount').textContent = `Mostrando ${visibleRows} prêmios`;
+    });
+  });
+</script>
+
+
+
