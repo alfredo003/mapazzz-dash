@@ -3,15 +3,13 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
    
-
-  
         <div class="login-header">
             <h1>MapaZZZ</h1>
             <p>Faça login para acessar o painel</p>
         </div>
      
-        <% if (error) { %>
-            <div class="alert alert-danger"><%= error %></div>
+        <% if (error && error.length > 0) { %>
+            <div class="alert alert-danger"> <small><%= error %></small> </div>
         <% } %>
         <form class="login-form" id="loginForm" action="/login" method="POST">
             <div class="form-group">

@@ -1,13 +1,14 @@
-// Declare a variável globalmente
+// Variáveis globais
 let riskChart;
+let institutionsData = JSON.parse(localStorage.getItem('institutions')) || [];
+let blogsData = JSON.parse(localStorage.getItem('blogs')) || [];
+let awardsData = JSON.parse(localStorage.getItem('awards')) || [];
 
 // Função para verificar autenticação
 function checkAuth() {
-    // Se você estiver usando Firebase Auth
     if (typeof firebase !== 'undefined' && firebase.auth) {
         return firebase.auth().currentUser !== null;
     }
-    // Se não estiver usando autenticação, apenas retorne true
     return true;
 }
 
@@ -16,15 +17,13 @@ async function loadReportsData() {
     try {
         const response = await fetch('/api/reports/statistics');
         const data = await response.json();
-        
-        // Atualiza os dados do gráfico
+
         riskChart.data.datasets[0].data = [
             data.lowRisk || 0,
             data.mediumRisk || 0,
             data.highRisk || 0
         ];
-        
-        // Atualiza o gráfico
+
         riskChart.update();
     } catch (error) {
         console.error('Erro ao carregar dados:', error);
@@ -33,7 +32,6 @@ async function loadReportsData() {
 
 document.addEventListener('DOMContentLoaded', function() {
     try {
-        // Chart initialization
         const ctx = document.getElementById('riskChart');
         if (!ctx) {
             console.error('Elemento canvas "riskChart" não encontrado');
@@ -89,13 +87,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         });
-        
+
         // Load data
         loadReportsData();
         loadInstitutionsData();
         loadBlogsData();
         loadAwardsData();
-        
+
         // Refresh buttons
         document.getElementById('refreshMap').addEventListener('click', loadReportsData);
         document.getElementById('refreshChart').addEventListener('click', loadReportsData);
@@ -104,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('refreshInstitutions').addEventListener('click', loadInstitutionsData);
         document.getElementById('refreshBlogs').addEventListener('click', loadBlogsData);
         document.getElementById('refreshAwards').addEventListener('click', loadAwardsData);
-        
+
         // Institution form submission
         document.getElementById('institutionForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -122,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
             this.reset();
             loadInstitutionsData();
         });
-        
+
         // Blog form submission
         document.getElementById('blogForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -138,7 +136,7 @@ document.addEventListener('DOMContentLoaded', function() {
             this.reset();
             loadBlogsData();
         });
-        
+
         // Award form submission
         document.getElementById('awardForm').addEventListener('submit', function(e) {
             e.preventDefault();

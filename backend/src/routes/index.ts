@@ -4,6 +4,7 @@ import authorityRouter from './authority.routes';
 import blogRouter from './blog.routes';
 import userRouter from './user.routes';
 import statisticRouter from './statistic.routes';
+import notificationRoutes from './notification.routes';
 import { authenticateToken } from '../middleware/auth';
 import awardRouter from './award.routes';
 
@@ -15,5 +16,6 @@ routes.use('/blog', authenticateToken, blogRouter);
 routes.use('/usuarios', authenticateToken, userRouter);
 routes.use('/estatisticas', authenticateToken, statisticRouter);
 routes.use('/recompensas', authenticateToken, awardRouter);
+routes.use('/notificacoes',notificationRoutes);
 
 export default routes;

@@ -18,7 +18,6 @@ authRouter.get('/login', (req, res) => {
 authRouter.post('/login', async (req, res) => {
     const { email, password } = req.body;
     try {
-   
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const token = await userCredential.user.getIdToken();
         req.session.token = token;

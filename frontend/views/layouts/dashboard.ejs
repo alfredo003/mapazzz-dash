@@ -26,10 +26,8 @@
             });
         }
         
-        // Call the function when the page loads
         document.addEventListener('DOMContentLoaded', setActiveMenu);
 
-        // Add sidebar toggle functionality
         document.addEventListener('DOMContentLoaded', function() {
             const menuToggle = document.querySelector('.menu-toggle');
             const sidebar = document.querySelector('.sidebar');
@@ -65,7 +63,7 @@
             });
         });
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
 <body>
     <div class="container">
@@ -113,14 +111,14 @@
                             <span>Reportagens</span>
                         </a>
                     </li>
-                    <li>
-                        <a href="/users" class="menu-item">
-                            <i class="fas fa-users"></i>
-                            <span>Usuários</span>
+                    <li> 
+                        <a href="/notificacoes" class="menu-item">
+                            <i class="fas fa-bullhorn "></i>
+                            <span>Notificações</span>
                         </a>
                     </li>
                     <li>
-                        <a href="/settings" class="menu-item">
+                        <a href="/users" class="menu-item">
                             <i class="fas fa-cog"></i>
                             <span>Configurações</span>
                         </a>
@@ -186,10 +184,11 @@
              <!-- Scripts -->
 
     <!-- External Dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Your existing scripts -->
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/script.js"></script>
+ 
     <script src="/js/message.js"></script>
 </body>
 </html>
