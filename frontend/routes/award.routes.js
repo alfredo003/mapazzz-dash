@@ -7,9 +7,7 @@ const storage = multer.memoryStorage();
 const makeAuthenticatedRequest = require('../helpers/AuthReq');
 
 const upload = multer({ storage: storage });
-
 const awardRouter = Router();
-
 
 awardRouter.get('/', async (req, res) => {
     

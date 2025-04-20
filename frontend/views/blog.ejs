@@ -23,7 +23,7 @@
             <h3><i class="fas fa-blog"></i> Adicionar Novo Blog</h3>
         </div>
         <div class="card-body">
-            <form id="blogForm" class="needs-validation" action="/blog" method="POST" novalidate>
+            <form id="blogForm" class="needs-validation" action="/blog" method="POST" enctype="multipart/form-data">
                 <div class="form-group">
                     <label for="blogTitle">Título</label>
                     <input type="text" id="blogTitle" name="title" class="form-control" 
@@ -39,14 +39,11 @@
                    
                 </div>
                 <div class="form-group">
-                    <label for="blogPhoto">URL da Foto</label>
+                    <label for="blogPhoto">Imagem</label>
                     <div class="input-group">
-                     
-                        <input type="url" id="blogPhoto" name="imgUrl" class="form-control" 
-                               placeholder="https://example.com/image.jpg" required>
-                        
+                        <input type="file" id="blogPhoto" name="file" class="form-control"  required>    
                     </div>
-                    <small class="form-text text-muted">Insira uma URL válida de imagem (jpg, png, gif)</small>
+                    <small class="form-text text-muted">Insira imagem (jpg, png, gif)</small>
                 </div>
                 <div class="form-group mt-4">
                     <button type="submit" class="btn btn-primary">
@@ -81,7 +78,9 @@
                         <% if (blogs && blogs.length > 0) { %>
                             <% blogs.forEach(blog => { %>
                                 <tr>
-                                    <td>#</td>
+                                    <td>
+                                        <img src="<%=blog.imgUrl%>" alt="<%= blog.title %>" class="img-thumbnail"/>
+                                    </td>
                                     <td><%= blog.title %></td>
                                     <td><%= blog.body.length > 100 ? blog.body.substring(0, 100) + '...' : blog.body %></td>
                                     

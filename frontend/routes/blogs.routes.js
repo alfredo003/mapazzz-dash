@@ -1,7 +1,12 @@
 const  {Router}  = require("express");
-const makeAuthenticatedRequest  = require('../helpers/AuthReq');
+const axios = require('axios');
+const multer = require('multer');
+const FormData = require('form-data');
+const storage = multer.memoryStorage();
+const makeAuthenticatedRequest = require('../helpers/AuthReq');
 const { getInstitutionIcon, formatInstitutionType } = require('../helpers/viewHelpers')
 
+const upload = multer({ storage: storage });
 const blogsRouter = Router();
 
 blogsRouter.get('/', async(req, res) => {
@@ -39,13 +44,26 @@ blogsRouter.get('/', async(req, res) => {
             }
         });
     }
-});
+}); 
 
-blogsRouter.post('/', async (req, res) => {
+blogsRouter.post('/', upload.single('file'),async (req, res) => {
     try {
-        const { title, content, imgUrl } = req.body;
-        
-        const blogData = { title, content, imgUrl };
+        const { title, content } = req.body;
+
+        if (!req.file) {
+            req.flash('error', 'Por favor, envie uma imagem.');
+            return res.redirect('/premiacoes');
+        }
+
+        const formData = new FormData();
+        formData.append('image', req.file.buffer, req.file.originalname);
+
+        const imageResponse = await axios.post('https://burger-image-api.vercel.app/upload', formData, {
+            headers: formData.getHeaders(),
+        });
+        const photoUrl = imageResponse.data.imageUrl;
+
+        const blogData = { title, content, imgUrl: photoUrl };
         await makeAuthenticatedRequest(req.session.token, 'POST', '/blog', blogData);
         
         req.flash('success', 'Conteudo adicionado com sucesso!');
