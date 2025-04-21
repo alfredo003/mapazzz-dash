@@ -4,7 +4,7 @@ import * as admin from 'firebase-admin';
 
 interface BlogData {
     content: string;
-    imgUrl: string;
+    imageUrl: string;
     title: string;
 }
 
@@ -31,7 +31,7 @@ class Blog
         try {
             const docRef = await connectiondb.collection("blog").add({
                 body: data.content,
-                imgUrl: data.imgUrl,
+                imageUrl: data.imageUrl,
                 title: data.title
             });
 

@@ -34,9 +34,9 @@ export class BlogController {
     static async create(req: Request, res: Response) {
   
         try {
-            const { content, imgUrl, title } = req.body;
+            const { content, imageUrl, title } = req.body;
             
-            if (!content || !imgUrl || !title) {
+            if (!content || !imageUrl || !title) {
                 return res.status(400).json({
                     error: "Missing required fields",
                     message: "Name, email and tel are required"
@@ -46,7 +46,7 @@ export class BlogController {
             const blog = new Blog();
             const blogs = await blog.create({
                 content,
-                imgUrl,
+                imageUrl,
                 title
             });
 

@@ -5,7 +5,6 @@ interface AwardData {
     imageUrl: string;
     points: number;
     title: string;
-    id:string;
 }
 
 class Award
@@ -32,8 +31,7 @@ class Award
             const docRef = await connectiondb.collection("reward").add({
                 imageUrl: data.imageUrl,
                 points: data.points,
-                title: data.title,
-                id:data.id
+                title: data.title   
             });
 
             return docRef;

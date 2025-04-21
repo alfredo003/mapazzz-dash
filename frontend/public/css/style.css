@@ -23,7 +23,7 @@ body {
 }
 
 .sidebar-header {
-    padding: 5px;
+    padding: 9px;
     display: flex;
     align-items: center;
     gap: 15px;

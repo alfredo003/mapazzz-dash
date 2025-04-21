@@ -3,6 +3,7 @@ const { signInWithEmailAndPassword, signOut } = require('firebase/auth');
 const { auth } = require('../config/firebase-config');
 const authRouter = Router();
 
+const  makeAuthenticatedRequest  = require('./../helpers/AuthReq');
 
 authRouter.get('/', (req, res) => {
     res.redirect('/login');
@@ -19,9 +20,26 @@ authRouter.post('/login', async (req, res) => {
     const { email, password } = req.body;
     try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        const token = await userCredential.user.getIdToken();
+        const user =  userCredential.user;
+        
+        const token = await user.getIdToken();
+        const userId = user.uid;
+
+
+        req.session.userId = userId;
         req.session.token = token;
         req.session.userEmail = email;
+        req.session.pass = password;
+
+        const userData = await makeAuthenticatedRequest(req.session.token, 'GET', `/usuarios/${req.session.userId}`);
+        const role = userData.userData[0].role;
+        
+        if(!role || role !== 'admin')
+        {
+            req.flash('error', "Acesso negado!");
+            res.redirect('/login');
+        }
+
         res.redirect('/home');
     } catch (error) {
         let errorMessage = 'Email ou senha inválidos';

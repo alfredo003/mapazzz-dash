@@ -9,10 +9,30 @@ export class NotificationController {
         return res.status(200).json(fcm);
     }
 
-    static async sendNotification(req: Request, res: Response) {
-        const {title, message, token,userId} = req.body;
+    static async register(req: Request, res: Response) {
+        const {title, message,userId} = req.body;
         try {
-            const notification = {
+        
+            const notif = new Notification();
+            
+            const notificationSave = await notif.create({
+                IdUser: userId  || null,
+                body: message,
+                createdAt: new Date(), 
+                title: title
+            });
+
+            return res.status(201).json({notificationSave});
+        } catch (error) {
+            console.error('Error sending notification:', error);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+    }
+
+    static async sendNotification(req: Request, res: Response) {
+        const {title, message, token} = req.body;
+        try {
+            const notification = { 
                 token: token,
                 title: title,
                 message: message
@@ -20,15 +40,8 @@ export class NotificationController {
             const notif = new Notification();
             const result = await notif.sendPushNotification(notification);
             
-            const notificationSave = await notif.create({
-                IdUser: userId,
-                body: message,
-                createdAt: new Date(), 
-                title: title
-            });
 
-
-            return res.status(201).json({result, notificationSave});
+            return res.status(201).json({result});
         } catch (error) {
             console.error('Error sending notification:', error);
             return res.status(500).json({ error: 'Internal server error' });

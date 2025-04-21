@@ -1,5 +1,17 @@
 <link rel="stylesheet" href="css/reports.css">
 <div class="content">
+    <% if(messages.success && messages.success.length > 0) { %>
+        <div id="success-alert" class="alert alert-success">
+          <span class="message"><%= messages.success %></span>
+          <button class="close-btn" onclick="closeAlert(this.parentElement)">&times;</button>
+        </div>
+      <% } %>
+      <% if(messages.error && messages.error.length > 0) { %>
+        <div id="error-alert" class="alert alert-danger">
+          <span class="message"><%= messages.error %></span>
+          <button class="close-btn" onclick="closeAlert(this.parentElement)">&times;</button>
+        </div>
+      <% } %>
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
@@ -134,42 +146,4 @@
     </div>
 </div>
 
-<!-- Modal para visualizar detalhes da notificação -->
-<div class="modal fade" id="notificationModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-light">
-                <h5 class="modal-title">
-                    <i class="fas fa-info-circle me-2"></i>
-                    Detalhes da Notificação
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div id="notificationDetails" class="p-3">
-                    <!-- Detalhes serão carregados dinamicamente -->
-                </div>
-                <div class="notification-stats mt-4">
-                    <h6>Estatísticas de Entrega</h6>
-                    <div class="progress mb-3">
-                        <div class="progress-bar" role="progressbar" style="width: 0%"></div>
-                    </div>
-                    <div class="row text-center">
-                        <div class="col">
-                            <h4 class="text-primary" id="totalRecipients">0</h4>
-                            <small>Total de Destinatários</small>
-                        </div>
-                        <div class="col">
-                            <h4 class="text-success" id="readCount">0</h4>
-                            <small>Lidas</small>
-                        </div>
-                        <div class="col">
-                            <h4 class="text-warning" id="pendingCount">0</h4>
-                            <small>Pendentes</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div></div>
+</div>

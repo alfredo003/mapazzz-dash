@@ -42,7 +42,7 @@ authoritiesRoutes.get('/', async (req, res) => {
             }
         });
     }
- });
+ }); 
  
  authoritiesRoutes.post('/', async (req, res) => {
      try {

@@ -47,12 +47,11 @@ class AwardController {
                     message: "points or title and tel are required"
                 });
             }
-
+            const convetPoint = Number(points);
             const award = new Award();
             const awards = await award.create({
-                id,
                 imageUrl,
-                points,
+                points:convetPoint,
                 title,
             });
 
