@@ -6,11 +6,12 @@ dotenv.config();
 const serviceAccount = require('./mapazzzkey.json');
 
 if (!admin.apps.length) {
-  admin.initializeApp({
+  const adm = admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
   });
 }
 
 const connectiondb = admin.firestore();
+
 
 export { connectiondb };

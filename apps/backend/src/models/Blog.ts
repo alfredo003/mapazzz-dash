@@ -10,7 +10,6 @@ interface BlogData {
 
 class Blog
 {
-
     static async find() {
         const snapshot = await connectiondb.collection("blog").get();
 
@@ -54,6 +53,19 @@ class Blog
             return docRef;
         } catch (error) {
             console.error('Error updating blog:', error);
+            throw error;
+        }
+    }
+
+    async delete(uid: string) {
+        try {
+            const docRef = connectiondb.collection("blog").doc(uid);
+    
+            await docRef.delete();
+    
+            return { message: `Blog with uid ${uid} successfully deleted.` };
+        } catch (error) {
+            console.error('Error deleting blog:', error);
             throw error;
         }
     }

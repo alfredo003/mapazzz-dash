@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <title><%- title %></title>
-    <!-- Bootstrap CSS -->
+   
     <link rel="icon" href="/img/icon.png">
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/style.css">
@@ -14,58 +14,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        function setActiveMenu() {
-            const currentPath = window.location.pathname;
-            const menuItems = document.querySelectorAll('.sidebar-menu a');
-            
-            menuItems.forEach(item => {
-                const href = item.getAttribute('href');
-                if (href === currentPath || (currentPath.includes(href) && href !== '/')) {
-                    item.classList.add('active');
-                } else {
-                    item.classList.remove('active');
-                }
-            });
-        }
-        
-        document.addEventListener('DOMContentLoaded', setActiveMenu);
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const menuToggle = document.querySelector('.menu-toggle');
-            const sidebar = document.querySelector('.sidebar');
-            const mainContent = document.querySelector('.main-content');
-            let isSidebarCollapsed = false;
-
-            menuToggle.addEventListener('click', function() {
-                isSidebarCollapsed = !isSidebarCollapsed;
-                
-                if (isSidebarCollapsed) {
-                    sidebar.style.width = '80px';
-                    mainContent.style.marginLeft = '80px';
-                    document.querySelector('.sidebar-header h2').style.display = 'none';
-                    document.querySelectorAll('.sidebar-menu .menu-item span').forEach(span => {
-                        span.style.display = 'none';
-                    });
-                    document.querySelectorAll('.sidebar-menu .menu-item').forEach(item => {
-                        item.style.justifyContent = 'center';
-                        item.style.padding = '16px';
-                    });
-                } else {
-                    sidebar.style.width = '280px';
-                    mainContent.style.marginLeft = '280px';
-                    document.querySelector('.sidebar-header h2').style.display = 'block';
-                    document.querySelectorAll('.sidebar-menu .menu-item span').forEach(span => {
-                        span.style.display = 'inline';
-                    });
-                    document.querySelectorAll('.sidebar-menu .menu-item').forEach(item => {
-                        item.style.justifyContent = 'flex-start';
-                        item.style.padding = '14px 25px';
-                    });
-                }
-            });
-        });
-    </script>
+    <script src="/js/menu.js"></script>
 
 </head>
 <body>
@@ -74,7 +23,7 @@
         <div class="sidebar">
             <div class="sidebar-header">
                 <img src="img/logo-icon.png" alt="MapaZZZ Logo" class="logo">
-                <h2> <img src="img/logo-latter.png" alt="MapaZZZ Logo" style="width: 153px; margin-top: 8px;" class="logo"></h2>
+                <h2> <img src="img/logo-latter.png" alt="MapaZZZ Logo" style="width: 153px; margin-top: 8px;"></h2>
             </div>
             <nav class="sidebar-menu">
                 <ul>

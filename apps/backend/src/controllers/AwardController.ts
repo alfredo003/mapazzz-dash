@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import Award from "../models/Award";
+import Notification from "../models/Notification";
 
 class AwardController {
     static async getAll(req: Request, res: Response) {
@@ -55,6 +56,14 @@ class AwardController {
                 title,
             });
 
+            const dataNofity = {
+                title:"Novo prêmio Mapazzz",
+                message:title
+            }
+           
+            const resultNotify = (new Notification(dataNofity.title,dataNofity.message))
+            await resultNotify.sendPush();
+
             res.status(201).json({
                 message: "award created successfully",
                 awards
@@ -97,6 +106,42 @@ class AwardController {
             res.status(500).json({
                 error: "Internal server error",
                 message: "Failed to update award"
+            });
+        }
+    }
+
+    static async delete(req: Request, res: Response)
+    {
+        try{
+            const uid = req.params.uid;
+            
+            if (!uid) {
+                return res.status(400).json({
+                    error: "Missing ID",
+                    message: "Award ID is required"
+                });
+            }
+
+            const award = new Award();
+            const deleteAward = await award.delete(uid);
+
+            if (!deleteAward) {
+                return res.status(404).json({
+                    error: "Not found",
+                    message: "Award post not found"
+                });
+            }
+
+            res.status(200).json({
+                message: "Award delete successfully",
+                award: deleteAward
+            });
+
+        } catch (error) {
+            //console.error('Error deleting award:', error);
+            res.status(500).json({
+                error: "Internal server error",
+                message: "Failed to delete award"
             });
         }
     }

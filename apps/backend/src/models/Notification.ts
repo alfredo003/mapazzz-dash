@@ -12,6 +12,14 @@ interface NotificationData
 
 class Notification
 {
+    private title: string;
+    private message: string;
+
+    constructor(title?:string,message?:string)
+    {
+        this.title = title || "";
+        this.message = message || "";
+    }
     async create(notification: NotificationData) {
         try {
             const docRef = await connectiondb.collection("notifications").add(notification);
@@ -30,20 +38,33 @@ class Notification
         }));
     }
 
-    async sendPushNotification({ token, title, message }: { token: string, title: string, message: string })
+    async sendPush()
     {
         try {
+         
+            const result = await this.getFCMToken(); 
+            const tokens = result[0].token;
+
             const data = {
                 notification: {
-                    title: title,
-                    body: message
-                },
-                token: token
+                    title: this.title,
+                    body: this.message
+                }
             };
 
-            const response = await admin.messaging().send(data);
-          
-            return response;
+            for (const token of tokens)
+            {
+                try {  
+                   const res = await admin.messaging().send({
+                    data:data.notification,
+                    token:token
+                   });
+                    console.log(`Enviado com sucesso: ${res}`);
+                } catch (error) {
+                    console.error(`Erro ao enviar o token ${token}:`, error);
+                }
+            }
+
         } catch (error) {
             console.error('Error sending notification:', error);
             throw error;

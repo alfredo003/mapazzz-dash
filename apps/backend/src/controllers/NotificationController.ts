@@ -1,13 +1,8 @@
 import { Request, Response } from "express";
 import Notification from "../models/Notification";
 
-export class NotificationController {
-
-    static async findAllFcm(req: Request, res: Response) {
-        const notif = new Notification();
-        const fcm = await notif.getFCMToken();
-        return res.status(200).json(fcm);
-    }
+export class NotificationController
+{
 
     static async register(req: Request, res: Response) {
         const {title, message,userId} = req.body;
@@ -30,17 +25,11 @@ export class NotificationController {
     }
 
     static async sendNotification(req: Request, res: Response) {
-        const {title, message, token} = req.body;
+        const {title, message} = req.body;
         try {
-            const notification = { 
-                token: token,
-                title: title,
-                message: message
-            };
-            const notif = new Notification();
-            const result = await notif.sendPushNotification(notification);
             
-
+            const result = await(new Notification(title,message)).sendPush();
+            
             return res.status(201).json({result});
         } catch (error) {
             console.error('Error sending notification:', error);

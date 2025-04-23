@@ -57,6 +57,17 @@ class Award
             throw error;
         }
     }
+
+    async delete(uid: string) {
+        try {
+            const docRef = connectiondb.collection("reward").doc(uid);
+            await docRef.delete();
+            return { message: `Award with uid ${uid} successfully deleted.` };
+        } catch (error) {
+            console.error('Error deleting award:', error);
+            throw error;
+        }
+    }
     
 }
 export default Award;
