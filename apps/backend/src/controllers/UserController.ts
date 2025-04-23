@@ -71,6 +71,54 @@ export class UserController {
         }
     }
     
+    static async update(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+            const { name, email, phoneNumber, role, password } = req.body;
+    
+            if (!id) {
+                return res.status(400).json({
+                    error: "Missing user ID",
+                    message: "User ID is required for update"
+                });
+            }
+    
+            if (!name && !email && !phoneNumber && !role && !password) {
+                return res.status(400).json({
+                    error: "Missing fields to update",
+                    message: "At least one field (name, email, phoneNumber, role, password) must be provided"
+                });
+            }
+    
+            const user = new User();
+            const updated = await user.update(id, {
+                name,
+                email,
+                phoneNumber,
+                role,
+                password
+            });
+    
+            if (!updated) {
+                return res.status(404).json({
+                    error: "User not found",
+                    message: "No user found with the given ID"
+                });
+            }
+    
+            res.status(200).json({
+                message: "User updated successfully"
+            });
+    
+        } catch (error) {
+            console.error('Error updating user:', error);
+            res.status(500).json({
+                error: "Internal server error",
+                message: "Failed to update user"
+            });
+        }
+    }
+    
 
     static async getAll(req: Request, res: Response) {
         try {
@@ -115,4 +163,6 @@ export class UserController {
             });
         }
     }
+
+
 }

@@ -73,6 +73,43 @@ class User
         }
     }
 
+    async update(uid: string, data: Partial<Omit<UserData, 'createdAt' | 'resolvedCases'>>) {
+        try {
+
+            const authUpdates: any = {};
+            if (data.email) authUpdates.email = data.email;
+            if (data.password) authUpdates.password = data.password;
+            if (data.name) authUpdates.displayName = data.name;
+    
+            if (Object.keys(authUpdates).length > 0) {
+                await admin.auth().updateUser(uid, authUpdates);
+            }
+    
+        
+            const usersRef = connectiondb.collection("users");
+            const snapshot = await usersRef.where("uid", "==", uid).get();
+    
+            if (snapshot.empty) {
+                throw new Error(`No user found with UID: ${uid}`);
+            }
+    
+            const docRef = snapshot.docs[0].ref;
+    
+            const firestoreUpdates: any = {};
+            if (data.name) firestoreUpdates.name = data.name;
+            if (data.email) firestoreUpdates.email = data.email;
+            if (data.phoneNumber) firestoreUpdates.phoneNumber = data.phoneNumber;
+            if (data.role) firestoreUpdates.role = data.role;
+    
+            await docRef.update(firestoreUpdates);
+    
+            return docRef;
+        } catch (error) {
+            console.error('Error updating user:', error);
+            throw error;
+        }
+    }
+
     async block(uid: string) {
         try {
 
