@@ -11,6 +11,11 @@ const makeAuthenticatedRequest = require('./helpers/AuthReq');
 const app = express()
 const port = 2001
 
+app.use((req, res, next) => {
+    res.setHeader('Content-Security-Policy', "default-src 'self'; connect-src 'self' http://localhost:2000");
+    next();
+  });
+  
 app.use(express.urlencoded({ extended: true })); 
 app.use(express.json()); 
 

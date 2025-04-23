@@ -23,7 +23,7 @@ body {
 }
 
 .sidebar-header {
-    padding: 3px;
+    padding: 9px;
     display: flex;
     align-items: center;
     gap: 15px;
@@ -32,6 +32,7 @@ body {
 }
 
 .sidebar-header .logo {
+    margin-left: 2px;
     width: 50px;
     height: 50px;
     object-fit: contain;
