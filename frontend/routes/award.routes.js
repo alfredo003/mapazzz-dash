@@ -63,7 +63,7 @@ awardRouter.post('/', upload.single('file'), async (req, res) => {
         });
 
         const photoUrl = imageResponse.data.imageUrl;
-
+        
         const awardData = {  imageUrl: photoUrl, points, title };
         
         await makeAuthenticatedRequest(req.session.token, 'POST', '/recompensas', awardData);

@@ -18,9 +18,22 @@ app.use(helmet({
     contentSecurityPolicy: {
         directives: {
             ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-            "script-src": ["'self'", "'unsafe-inline'", "https://www.gstatic.com", "https://apis.google.com"],
+            "script-src": [
+                "'self'", 
+                "'unsafe-inline'",
+                 "https://www.gstatic.com",
+                  "https://apis.google.com",
+                   "https://cdn.jsdelivr.net"
+                ],
             "frame-src": ["'self'", "https://firebase.google.com"],
-            "img-src": ["'self'", "data:", "https://res.cloudinary.com"]
+            "img-src": [
+                "'self'", 
+                "data:", 
+                "https://res.cloudinary.com", 
+                "https://miro.medium.com",
+                "https://news.mit.edu/",
+                "https://{s}.tile.openstreetmap.org" 
+            ],
         }
     }
 }))
@@ -59,20 +72,24 @@ app.get('/redifinir', authenticateUser, (req, res) => {
 });
 
 app.post('/redifinir', authenticateUser, async (req, res) => {
-    const {password,confirmpassword} = req.body;
-    if(password !== confirmpassword)
+    const {newPassword,confirmpassword} = req.body;
+    if(newPassword !== confirmpassword)
     {
-        req.flash('error', "verifica as Passes!");
+        req.flash('error', "Verifica as Passes!");
         res.redirect('/redifinir');
     }
+
     try{
-        const data = {password}
+        const uid = req.session.userId;
+        const data = {newPassword,uid}
         const userData = await makeAuthenticatedRequest(req.session.token,
-            'GET', 
-            `/usuarios/${req.session.userId}/newpass`,
+            'POST', 
+            '/usuarios/newpass',
         data
         );
-        return res.redirect('/home');
+        //req.session.pass = newPassword;
+        req.flash('error', "Entra com a nova senha");
+        return res.redirect('/login');
     }catch(error)
     {
         req.flash('error', "Erro ao Redifinir a senha!");
@@ -92,7 +109,7 @@ app.get('/home', authenticateUser, async (req, res) => {
 
         const pass = req.session.pass;
       
-        if(pass === "123456")
+        if(pass === '123456')
         {
             return res.redirect('/redifinir');
         }

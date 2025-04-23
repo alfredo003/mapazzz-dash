@@ -61,9 +61,12 @@ blogsRouter.post('/', upload.single('file'),async (req, res) => {
         const imageResponse = await axios.post('https://burger-image-api.vercel.app/upload', formData, {
             headers: formData.getHeaders(),
         });
+
+        console.log(imageResponse);
+
         const photoUrl = imageResponse.data.imageUrl;
 
-        const blogData = { title, content, imgUrl: photoUrl };
+        const blogData = { title, content, imageUrl: photoUrl };
         await makeAuthenticatedRequest(req.session.token, 'POST', '/blog', blogData);
         
         req.flash('success', 'Conteudo adicionado com sucesso!');

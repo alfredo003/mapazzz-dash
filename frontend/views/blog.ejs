@@ -79,7 +79,7 @@
                             <% blogs.forEach(blog => { %>
                                 <tr>
                                     <td>
-                                        <img src="<%=blog.imgUrl%>" alt="<%= blog.title %>" class="img-thumbnail"/>
+                                        <img src="<%=blog.imgUrl ? blog.imgUrl  : blog.imageUrl %>" alt="<%= blog.title %>" class="img-thumbnail"/>
                                     </td>
                                     <td><%= blog.title %></td>
                                     <td><%= blog.body.length > 100 ? blog.body.substring(0, 100) + '...' : blog.body %></td>

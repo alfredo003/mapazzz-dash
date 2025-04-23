@@ -42,7 +42,45 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <canvas id="riskChart"></canvas> 
+                            <div style="width: 100%;">
+                                <canvas id="myChart"></canvas>
+                            </div>
+                              
+                              <script>
+                                const ctx = document.getElementById('myChart');
+                              
+                                new Chart(ctx, {
+                                  type: 'bar',
+                                  data: {
+                                    labels: ['Baixo', 'Médio', 'Alto'],
+                                    datasets: [{
+                                      label: 'Baixo',
+                                      data: [ 1, 2, 3, 4],
+                                      borderWidth: 1,
+                                  
+                                    },
+                                    {
+                                      label: 'Médio',
+                                      data: [ 3, 5, 2, 3],
+                                      borderWidth: 1,
+                                     
+                                    },
+                                    {
+                                      label: 'Alto',
+                                      data: [ 3, 5, 2, 3],
+                                      borderWidth: 1,
+                                     
+                                    }]
+                                  },
+                                  options: {
+                                    scales: {
+                                      y: {
+                                        beginAtZero: true
+                                      }
+                                    }
+                                  }
+                                });
+                              </script> 
                         </div>
                     </div>
                     
