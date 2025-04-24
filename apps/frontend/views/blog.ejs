@@ -1,4 +1,5 @@
 <link rel="stylesheet" href="css/reports.css">
+
 <div class="content">
 
     <% if(messages.success && messages.success.length > 0) { %>
@@ -79,18 +80,26 @@
                             <% blogs.forEach(blog => { %>
                                 <tr>
                                     <td>
-                                        <img src="<%=blog.imgUrl ? blog.imgUrl  : blog.imageUrl %>" alt="<%= blog.title %>" class="img-thumbnail"/>
+                                        <img src="<%= blog.imageUrl %>" alt="<%= blog.title %>" class="img-thumbnail"/>
                                     </td>
                                     <td><%= blog.title %></td>
                                     <td><%= blog.body.length > 100 ? blog.body.substring(0, 100) + '...' : blog.body %></td>
                                     
                                     <td>
-                                        <button class="btn btn-outline btn-sm" onclick="" title="Visualizar detalhes">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        <button class="btn btn-outline btn-sm" onclick="" title="Editar">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
+                                        <div class="actions-cell">
+                                            <button 
+                                                class="btn btn-sm btn-light" 
+                                                onclick="openEditModal('<%- blog.uid %>', '<%- encodeURIComponent(blog.title) %>', '<%- encodeURIComponent(blog.body) %>', '<%- blog.imageUrl %>')" 
+                                                title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button 
+                                                class="btn btn-sm btn-light" 
+                                                onclick="openDeleteModal('<%- blog.uid %>', '<%- encodeURIComponent(blog.title) %>')" 
+                                                title="Excluir">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             <% }); %>
@@ -111,3 +120,168 @@
     </div>
 </div>
 </div>
+
+
+<div class="modal-overlay" id="editModalOverlay">
+    <div class="modal-content" style="max-width: 600px;">
+        <h2><i class="fas fa-edit"></i> Editar Blog</h2>
+        <form id="editBlogForm" class="needs-validation" action="/blog/update" method="POST" enctype="multipart/form-data">
+            <input type="hidden" id="editBlogId" name="blogId">
+            <input type="hidden" id="currentImageUrl" name="currentImageUrl">
+            <div class="form-group">
+                <label for="editBlogTitle">Título</label>
+                <input type="text" id="editBlogTitle" name="title" class="form-control" 
+                       required minlength="3" maxlength="100">
+            </div>
+            <div class="form-group">
+                <label for="editBlogDescription">Descrição</label>
+                <textarea id="editBlogDescription" name="content" class="form-control" 
+                        rows="5" required minlength="10"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="editBlogPhoto">Nova Imagem (opcional)</label>
+                <div class="input-group">
+                    <input type="file" id="editBlogPhoto" name="file" class="form-control">    
+                </div>
+                <div class="mt-2">
+                    <img id="currentBlogImage" src="" alt="Imagem atual" class="img-thumbnail" style="max-height: 100px;">
+                </div>
+            </div>
+            <div class="form-group mt-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Salvar Alterações
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="closeEditModal()">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<div class="modal-overlay" id="deleteModalOverlay">
+    <div class="modal-content" style="max-width: 400px;">
+        <h2><i class="fas fa-exclamation-triangle text-danger"></i> Confirmar Exclusão</h2>
+        <form id="deleteBlogForm" action="/blog/delete" method="POST">
+            <input type="hidden" id="deleteBlogId" name="blogId">
+            <p>Tem certeza que deseja excluir o blog <br>" <b><span id="deleteBlogTitle"></span></b> "</p>
+            <br>
+            <div class="form-group mt-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-trash"></i> Confirmar Exclusão
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function() {
+
+    window.openEditModal = function(blogId, title, content, imageUrl) {
+        try {
+            const modal = document.getElementById('editModalOverlay');
+            if (!modal) {
+                console.error('Modal element not found');
+                return;
+            }
+
+            // Decodificar as strings que podem conter caracteres especiais
+            title = decodeURIComponent(title.replace(/\+/g, ' '));
+            content = decodeURIComponent(content.replace(/\+/g, ' '));
+
+            // Preencher os campos
+            document.getElementById('editBlogId').value = blogId;
+            document.getElementById('editBlogTitle').value = title;
+            document.getElementById('editBlogDescription').value = content;
+            document.getElementById('currentImageUrl').value = imageUrl;
+            
+            const imgElement = document.getElementById('currentBlogImage');
+            if (imgElement) {
+                imgElement.src = imageUrl;
+            }
+
+            // Mostrar o modal com animação
+            modal.style.display = 'flex';
+            // Adicionar um pequeno delay para a animação funcionar
+            setTimeout(() => {
+                modal.classList.add('active');
+            }, 10);
+        } catch (error) {
+            console.error('Error opening modal:', error);
+        }
+    
+ 
+    window.closeEditModal = function() {
+        const modal = document.getElementById('editModalOverlay');
+        if (modal) {
+            modal.classList.remove('active');
+            // Esperar a animação terminar antes de esconder o modal
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+        }
+    };
+
+        // Prevenir que cliques dentro do modal o fechem
+        const modalContent = modal.querySelector('.modal-content');
+        if (modalContent) {
+            modalContent.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        }
+    }
+
+    window.openDeleteModal = function(blogId, title) {
+        try {
+            const modal = document.getElementById('deleteModalOverlay');
+            if (!modal) {
+                console.error('Delete modal element not found');
+                return;
+            }
+
+            title = decodeURIComponent(title.replace(/\+/g, ' '));
+
+           
+            document.getElementById('deleteBlogId').value = blogId;
+            document.getElementById('deleteBlogTitle').textContent = title;
+
+            modal.style.display = 'flex';
+            setTimeout(() => {
+                modal.classList.add('active');
+            }, 10);
+        } catch (error) {
+            console.error('Error opening delete modal:', error);
+        }
+    };
+
+    window.closeDeleteModal = function() {
+        const modal = document.getElementById('deleteModalOverlay');
+        if (modal) {
+            modal.classList.remove('active');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+        }
+    };
+
+
+    const deleteModal = document.getElementById('deleteModalOverlay');
+    if (deleteModal) {
+        const modalContent = deleteModal.querySelector('.modal-content');
+        if (modalContent) {
+            modalContent.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        }
+        deleteModal.addEventListener('click', closeDeleteModal);
+    }
+
+});
+</script>
+

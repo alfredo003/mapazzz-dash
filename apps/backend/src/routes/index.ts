@@ -17,5 +17,5 @@ routes.use('/usuarios',authenticateToken, userRouter);
 routes.use('/estatisticas', statisticRouter);
 routes.use('/recompensas', authenticateToken, awardRouter);
 routes.use('/notificacoes',authenticateToken,notificationRoutes);
-
+ 
 export default routes;

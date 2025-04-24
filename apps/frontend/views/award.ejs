@@ -107,14 +107,20 @@
                           <td><%= award.title %></td>
                           <td><%= award.points %></td>
                           <td>
-                              <div class="actions-cell">
-                                  <button class="btn btn-sm btn-light" onclick="editInstitution('<%= award.uid %>')" title="Editar">
-                                      <i class="fas fa-edit"></i>
-                                  </button>
-                                  <button class="btn btn-sm btn-light" onclick="deleteInstitution('<%= award.uid %>')" title="Excluir">
-                                      <i class="fas fa-trash"></i>
-                                  </button>
-                              </div>
+                            <div class="actions-cell">
+                              <button 
+                                  class="btn btn-sm btn-light" 
+                                  onclick="openEditModal('<%-award.uid %>', '<%- encodeURIComponent(award.title) %>', '<%- encodeURIComponent(award.points) %>','<%- award.imageUrl %>')" 
+                                  title="Editar">
+                                  <i class="fas fa-edit"></i>
+                              </button>
+                              <button 
+                                  class="btn btn-sm btn-light" 
+                                  onclick="openDeleteModal('<%- award.uid %>', '<%- encodeURIComponent(award.title) %>')" 
+                                  title="Excluir">
+                                  <i class="fas fa-trash"></i>
+                              </button>
+                          </div>
                           </td>
                       </tr>
                   <% }); %>
@@ -140,65 +146,167 @@
 </div>
 
 
+<div class="modal-overlay" id="editModalOverlay">
+  <div class="modal-content" style="max-width: 600px;">
+      <h2><i class="fas fa-edit"></i> Editar Prêmio</h2>
+      <form id="editBlogForm" class="needs-validation" action="/premiacoes/update" method="POST" enctype="multipart/form-data">
+          <input type="hidden" id="editAwardId" name="awardId">
+          <input type="hidden" id="currentImageUrl" name="currentImageUrl">
+          <div class="form-group">
+              <label for="editAwardTitle">Título</label>
+              <input type="text" id="editAwardTitle" name="title" class="form-control" 
+                     required minlength="3" maxlength="100">
+          </div>
+          <div class="form-group">
+              <label for="editAwardDescription">Pontos</label>
+              <input  type="number" class="form-control"  id="editAwardPoints" name="points" required/>
+          </div>
+          <div class="form-group">
+              <label for="editAwardPhoto">Nova Foto (opcional)</label>
+              <div class="input-group">
+                  <input type="file" id="editAwardPhoto" name="file" class="form-control">    
+              </div>
+              <div class="mt-2">
+                  <img id="currentAwardPhoto" src="" alt="Foto atual" class="img-thumbnail" style="max-height: 100px;">
+              </div>
+          </div>
+          <div class="form-group mt-4">
+              <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-save"></i> Salvar Alterações
+              </button>
+              <button type="button" class="btn btn-secondary" onclick="closeEditModal()">
+                  <i class="fas fa-times"></i> Cancelar
+              </button>
+          </div>
+      </form>
+  </div>
+</div>
+
+
+<div class="modal-overlay" id="deleteModalOverlay">
+  <div class="modal-content" style="max-width: 400px;">
+      <h2><i class="fas fa-exclamation-triangle text-danger"></i> Confirmar Exclusão</h2>
+      <form id="deleteBlogForm" action="/premiacoes/delete" method="POST">
+          <input type="hidden" id="deleteAwardId" name="awardId">
+          <p>Tem certeza que deseja excluir o Prêmio <br>" <b><span id="deleteAwardTitle"></span></b> "</p>
+          <br>
+          <div class="form-group mt-4">
+              <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-trash"></i> Confirmar Exclusão
+              </button>
+              <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">
+                  <i class="fas fa-times"></i> Cancelar
+              </button>
+          </div>
+      </form>
+  </div>
+</div>
+
 <script>
+
   document.addEventListener('DOMContentLoaded', function() {
-    // Form validation
   
-
-    const photoInput = document.getElementById('awardPhoto');
-    const previewContainer = document.getElementById('photoPreview');
-    const previewImage = document.getElementById('previewImage');
-
-    // Show image preview when a file is selected
-    photoInput.addEventListener('change', function(event) {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          previewImage.src = e.target.result;
-          previewContainer.style.display = 'block';
-        };
-        reader.readAsDataURL(file);
-      } else {
-        previewContainer.style.display = 'none';
-      }
-    });
-
-    const toggleButton = document.getElementById('toggleForm');
-    const formContainer = document.getElementById('awardFormContainer');
-    
-    toggleButton.addEventListener('click', function() {
-      formContainer.style.display = formContainer.style.display === 'none' ? 'block' : 'none';
-      toggleButton.querySelector('i').classList.toggle('fa-chevron-down');
-      toggleButton.querySelector('i').classList.toggle('fa-chevron-up');
-    });
-
-    // Add search functionality
-    const searchInput = document.getElementById('searchAwards');
-    const awardsTableBody = document.getElementById('awardsTableBody');
-    const rows = awardsTableBody.getElementsByTagName('tr');
-
-    searchInput.addEventListener('input', function() {
-      const searchTerm = this.value.toLowerCase();
+      window.openEditModal = function(awardId, title, points, imageUrl) {
+          try {
+              const modal = document.getElementById('editModalOverlay');
+              if (!modal) {
+                  console.error('Modal element not found');
+                  return;
+              }
+  
+              title = decodeURIComponent(title.replace(/\+/g, ' '));
+  
+              // Preencher os campos
+              document.getElementById('editAwardId').value = awardId;
+              document.getElementById('editAwardTitle').value = title;
+              document.getElementById('editAwardPoints').value = points;
+              document.getElementById('currentImageUrl').value = imageUrl;
+              
+              const imgElement = document.getElementById('currentAwardPhoto');
+              if (imgElement) {
+                  imgElement.src = imageUrl;
+              }
+  
+              // Mostrar o modal com animação
+              modal.style.display = 'flex';
+              // Adicionar um pequeno delay para a animação funcionar
+              setTimeout(() => {
+                  modal.classList.add('active');
+              }, 10);
+          } catch (error) {
+              console.error('Error opening modal:', error);
+          }
       
-      Array.from(rows).forEach(row => {
-        const title = row.getElementsByTagName('td')[2]?.textContent.toLowerCase() || '';
-        const id = row.getElementsByTagName('td')[1]?.textContent.toLowerCase() || '';
-        const points = row.getElementsByTagName('td')[3]?.textContent.toLowerCase() || '';
-        
-        if (title.includes(searchTerm) || id.includes(searchTerm) || points.includes(searchTerm)) {
-          row.style.display = '';
-        } else {
-          row.style.display = 'none';
-        }
-      });
-
-      // Update the awards count
-      const visibleRows = Array.from(rows).filter(row => row.style.display !== 'none').length;
-      document.getElementById('awardsCount').textContent = `Mostrando ${visibleRows} prêmios`;
-    });
+   
+      window.closeEditModal = function() {
+          const modal = document.getElementById('editModalOverlay');
+          if (modal) {
+              modal.classList.remove('active');
+              // Esperar a animação terminar antes de esconder o modal
+              setTimeout(() => {
+                  modal.style.display = 'none';
+              }, 300);
+          }
+      };
+  
+          // Prevenir que cliques dentro do modal o fechem
+          const modalContent = modal.querySelector('.modal-content');
+          if (modalContent) {
+              modalContent.addEventListener('click', function(e) {
+                  e.stopPropagation();
+              });
+          }
+      }
+  
+      window.openDeleteModal = function(awardId, title) {
+          try {
+              const modal = document.getElementById('deleteModalOverlay');
+              if (!modal) {
+                  console.error('Delete modal element not found');
+                  return;
+              }
+  
+              title = decodeURIComponent(title.replace(/\+/g, ' '));
+  
+             
+              document.getElementById('deleteAwardId').value = awardId;
+              document.getElementById('deleteAwardTitle').textContent = title;
+  
+              modal.style.display = 'flex';
+              setTimeout(() => {
+                  modal.classList.add('active');
+              }, 10);
+          } catch (error) {
+              console.error('Error opening delete modal:', error);
+          }
+      };
+  
+      window.closeDeleteModal = function() {
+          const modal = document.getElementById('deleteModalOverlay');
+          if (modal) {
+              modal.classList.remove('active');
+              setTimeout(() => {
+                  modal.style.display = 'none';
+              }, 300);
+          }
+      };
+  
+  
+      const deleteModal = document.getElementById('deleteModalOverlay');
+      if (deleteModal) {
+          const modalContent = deleteModal.querySelector('.modal-content');
+          if (modalContent) {
+              modalContent.addEventListener('click', function(e) {
+                  e.stopPropagation();
+              });
+          }
+          deleteModal.addEventListener('click', closeDeleteModal);
+      }
+  
   });
-</script>
+  </script>
+  
+<script src="js/award.js"></script>
 
 
 

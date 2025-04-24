@@ -62,8 +62,6 @@ blogsRouter.post('/', upload.single('file'),async (req, res) => {
             headers: formData.getHeaders(),
         });
 
-        console.log(imageResponse);
-
         const photoUrl = imageResponse.data.imageUrl;
 
         const blogData = { title, content, imageUrl: photoUrl };
@@ -77,5 +75,56 @@ blogsRouter.post('/', upload.single('file'),async (req, res) => {
         res.redirect('/blog');
     }
 })
+
+blogsRouter.post('/update', upload.single('file'), async (req, res) => {
+    try {
+        const { blogId, title, content } = req.body;
+
+        if (!blogId) {
+            req.flash('error', 'ID do blog não fornecido');
+            return res.redirect('/blog');
+        }
+
+        let updateData = {
+            title,
+            content,
+            imageUrl: req.body.currentImageUrl // Keep existing image if no new one uploaded
+        };
+
+        if (req.file) {
+            const formData = new FormData();
+            formData.append('image', req.file.buffer, req.file.originalname);
+
+            const imageResponse = await axios.post('https://burger-image-api.vercel.app/upload', formData, {
+                headers: formData.getHeaders(),
+            });
+
+            updateData.imageUrl = imageResponse.data.imageUrl;
+        }
+
+        await makeAuthenticatedRequest(req.session.token, 'PUT', `/blog/${blogId}`, updateData);
+    
+        req.flash('success', 'Blog atualizado com sucesso!');
+        res.redirect('/blog');
+    } catch (error) {
+        console.error('Error updating blog:', error);
+        req.flash('error', 'Erro ao atualizar o blog. Por favor, tente novamente.');
+        res.redirect('/blog');
+    }
+});
+
+blogsRouter.post('/delete', async (req, res) => {
+    try {
+        const blogId  = req.body.blogId;
+       await makeAuthenticatedRequest(req.session.token, 'DELETE', `/blog/${blogId}`);
+       req.flash('success', 'Blog excluído com sucesso!');
+      res.redirect('/blog');
+    } catch (error) {
+        console.error('Error deleting blog:', error);
+        req.flash('error', 'Erro ao excluir o blog. Por favor, tente novamente.');
+        res.redirect('/blog');
+    }
+});
+
 
 module.exports = blogsRouter;

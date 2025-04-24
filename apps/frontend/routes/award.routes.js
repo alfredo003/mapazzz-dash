@@ -8,7 +8,7 @@ const makeAuthenticatedRequest = require('../helpers/AuthReq');
 
 const upload = multer({ storage: storage });
 const awardRouter = Router();
-
+ 
 awardRouter.get('/', async (req, res) => {
     
     try {
@@ -76,5 +76,57 @@ awardRouter.post('/', upload.single('file'), async (req, res) => {
         res.redirect('/premiacoes');
     }
 });
+
+
+awardRouter.post('/update', upload.single('file'), async (req, res) => {
+    try {
+        const { awardId, title, points } = req.body;
+
+        if (!awardId) {
+            req.flash('error', 'ID do premiacoes não fornecido');
+            return res.redirect('/premiacoes');
+        }
+
+        let updateData = {
+            title,
+            points,
+            imageUrl: req.body.currentImageUrl
+        };
+
+        if (req.file) {
+            const formData = new FormData();
+            formData.append('image', req.file.buffer, req.file.originalname);
+
+            const imageResponse = await axios.post('https://burger-image-api.vercel.app/upload', formData, {
+                headers: formData.getHeaders(),
+            });
+
+            updateData.imageUrl = imageResponse.data.imageUrl;
+        }
+
+        await makeAuthenticatedRequest(req.session.token, 'PUT', `/recompensas/${awardId}`, updateData);
+    
+        req.flash('success', 'Prêmio atualizado com sucesso!');
+        res.redirect('/premiacoes');
+    } catch (error) {
+        console.error('Error updating Prêmio:', error);
+        req.flash('error', 'Erro ao atualizar o Prêmio. Por favor, tente novamente.');
+        res.redirect('/premiacoes');
+    }
+});
+
+awardRouter.post('/delete', async (req, res) => {
+    try {
+        const awardId  = req.body.awardId;
+       await makeAuthenticatedRequest(req.session.token, 'DELETE', `/recompensas/${awardId}`);
+       req.flash('success', 'Prêmio excluído com sucesso!');
+      res.redirect('/premiacoes');
+    } catch (error) {
+        console.error('Error deleting Prêmio:', error);
+        req.flash('error', 'Erro ao excluir o Prêmio. Por favor, tente novamente.');
+        res.redirect('/premiacoes');
+    }
+});
+
 
 module.exports = awardRouter;

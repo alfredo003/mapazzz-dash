@@ -82,7 +82,7 @@ export class BlogController {
                     error: "Missing ID",
                     message: "Blog ID is required"
                 });
-            }
+            } 
 
             const blog = new Blog();
             const updatedBlog = await blog.update(id, {

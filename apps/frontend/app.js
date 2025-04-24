@@ -1,7 +1,6 @@
 const express = require('express')
 const expressLayouts = require('express-ejs-layouts')
 const session = require('express-session')
-const helmet = require('helmet')
 const flash = require('connect-flash')
 const { authenticateUser } = require('./middleware/auth')
 
@@ -11,37 +10,9 @@ const makeAuthenticatedRequest = require('./helpers/AuthReq');
 const app = express()
 const port = 2001
 
-app.use((req, res, next) => {
-    res.setHeader('Content-Security-Policy', "default-src 'self'; connect-src 'self' http://localhost:2000");
-    next();
-  });
   
 app.use(express.urlencoded({ extended: true })); 
 app.use(express.json()); 
-
-app.use(helmet({
-    contentSecurityPolicy: {
-        directives: {
-            ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-            "script-src": [
-                "'self'", 
-                "'unsafe-inline'",
-                 "https://www.gstatic.com",
-                  "https://apis.google.com",
-                   "https://cdn.jsdelivr.net"
-                ],
-            "frame-src": ["'self'", "https://firebase.google.com"],
-            "img-src": [
-                "'self'", 
-                "data:", 
-                "https://res.cloudinary.com", 
-                "https://miro.medium.com",
-                "https://news.mit.edu/",
-                "https://{s}.tile.openstreetmap.org" 
-            ],
-        }
-    }
-}))
 
 app.use(session({
     secret: 'your-secret-key',
