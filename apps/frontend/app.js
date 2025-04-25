@@ -115,6 +115,37 @@ app.get('/home', authenticateUser, async (req, res) => {
   
 })
 
+app.get('/perfil',authenticateUser, (req, res) => {
+
+    res.render('profile', { 
+        title: 'Mapazzz - Perfil', 
+        layout: './layouts/dashboard',
+        user: {
+            email: req.session.userEmail
+        },
+        messages: {
+            success: req.flash('success'),
+            error: req.flash('error')
+        }
+    });
+});
+
+app.get('/mynotify',authenticateUser, (req, res) => {
+
+    res.render('my_notify', { 
+        title: 'Mapazzz - Perfil', 
+        layout: './layouts/dashboard',
+        user: {
+            email: req.session.userEmail
+        },
+        messages: {
+            success: req.flash('success'),
+            error: req.flash('error')
+        }
+    });
+});
+
+
 
 app.get('/register', (req, res) => {
 

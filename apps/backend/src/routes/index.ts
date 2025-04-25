@@ -12,10 +12,10 @@ const routes = Router();
 
 routes.use('/reportagens', authenticateToken, reportRouter);
 routes.use('/autoridades', authenticateToken, authorityRouter);
-routes.use('/blog', authenticateToken, blogRouter);
+routes.use('/blog', blogRouter);
 routes.use('/usuarios',authenticateToken, userRouter);
 routes.use('/estatisticas', statisticRouter);
-routes.use('/recompensas', authenticateToken, awardRouter);
-routes.use('/notificacoes',authenticateToken,notificationRoutes);
+routes.use('/recompensas', awardRouter);
+routes.use('/notificacoes',notificationRoutes);
  
 export default routes;

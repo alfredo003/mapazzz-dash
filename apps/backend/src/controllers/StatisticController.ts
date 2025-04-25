@@ -19,7 +19,7 @@ export class StatisticController {
 
 
             const user = new User();
-            const users = await user.find();
+            const users = await user.findAll();
             const usersCount = users.length;
 
            

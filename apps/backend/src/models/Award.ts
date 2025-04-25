@@ -26,6 +26,7 @@ class Award
         return doc.data();
     }
 
+
     async create(data: Omit<AwardData, 'createdAt'>) {
         try {
             const docRef = await connectiondb.collection("reward").add({

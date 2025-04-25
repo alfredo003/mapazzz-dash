@@ -123,7 +123,7 @@ export class UserController {
     static async getAll(req: Request, res: Response) {
         try {
             const user = new User();
-            const users = await user.find();
+            const users = await user.findAll();
             res.status(200).json({ users });
         } catch (error) {
             console.error('Error fetching reports:', error);

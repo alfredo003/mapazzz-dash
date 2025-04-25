@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import Award from "../models/Award";
 import Notification from "../models/Notification";
+import User from "../models/User";
 
 class AwardController {
     static async getAll(req: Request, res: Response) {
@@ -31,6 +32,33 @@ class AwardController {
             });
         }
     }
+
+    static async getByclaimCode(req: Request, res: Response) {
+        const { claimcode } = req.params;
+        try {
+            const dataUser = new User();
+            const users = await dataUser.findAll();
+        
+        for (const user of users) {
+            
+          const claimed = user.data.rewards;
+          const foundClaim = claimed.find((data: { claimCode: string }) => data.claimCode === claimcode);
+            
+         if (foundClaim) {
+                return res.status(200).json(user);
+            }
+        }
+        
+        return res.status(404).json({ message: "Claim code not found!" });
+        } catch (error) {
+            console.error('Error fetching reports:', error);
+            return res.status(500).json({
+                error: "Internal server error",
+                message: "Failed to fetch reports"
+            });
+        }
+    }
+    
 
     static async create(req: Request, res: Response) {
         try {
@@ -108,6 +136,37 @@ class AwardController {
                 message: "Failed to update award"
             });
         }
+    }
+
+    static async claim(req: Request, res: Response) {
+        const { claimCode, rewardId } = req.body;
+        
+        if (!claimCode || !rewardId) {
+            return res.status(400).json({
+                error: "Missing required fields",
+                message: "points or title and tel are required"
+            });
+        }
+        /*try {
+            const convetPoint = Number(points);
+            const award = new Award();
+            const awards = await award.update(uid, {
+                imageUrl,
+                points:convetPoint,
+                title
+            });
+
+            res.status(200).json({
+                message: "award updated successfully",
+                awards
+            });
+        } catch (error) {
+            console.error('Error updating award:', error);
+            res.status(500).json({
+                error: "Internal server error",
+                message: "Failed to update award"
+            });
+        }*/
     }
 
     static async delete(req: Request, res: Response)

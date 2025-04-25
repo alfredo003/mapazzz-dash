@@ -1,5 +1,4 @@
 const  {Router}  = require("express");
-const express = require('express');
 const axios = require('axios');
 const multer = require('multer');
 const FormData = require('form-data');
@@ -27,6 +26,42 @@ awardRouter.get('/', async (req, res) => {
                 error: req.flash('error')
             },
             awards: awards
+        });
+    } catch (error) {
+       
+        res.render('award', { 
+            title: 'Mapazzz - Premiações', 
+            layout: './layouts/dashboard',
+            user: {
+                email: req.session.userEmail
+            },
+            awards: [],
+            messages: {
+                success: req.flash('success'),
+                error: req.flash('error')
+            }
+        });
+    }
+})
+
+awardRouter.get('/reivindicar/:user', async (req, res) => {
+    
+    const {user} = req.params;
+
+    try {
+       const result = await makeAuthenticatedRequest(req.session.token, 'GET', `/usuarios/${user}`);
+       const users = result.data;
+
+        res.render('reaward', { 
+            title: 'Mapazzz - Reivindicar Prêmio', 
+            layout: './layouts/dashboard',
+            user: {
+                email: req.session.userEmail
+            },
+            messages: {
+                success: req.flash('success'),
+                error: req.flash('error')
+            }
         });
     } catch (error) {
        
@@ -77,6 +112,20 @@ awardRouter.post('/', upload.single('file'), async (req, res) => {
     }
 });
 
+awardRouter.post('/search', async (req, res) => {
+    try {
+
+        const  {claimcode} = req.body;
+        
+        const user = await makeAuthenticatedRequest(req.session.token, 'GET', `/recompensas/search/${claimcode}`);
+ 
+        res.redirect(`/premiacoes/reivindicar/${user.uid}`);
+       
+    } catch (error) {
+        req.flash('error', 'Este codigo não esta disponivel');
+        res.redirect('/premiacoes');
+    }
+});
 
 awardRouter.post('/update', upload.single('file'), async (req, res) => {
     try {

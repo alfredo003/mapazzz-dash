@@ -7,9 +7,9 @@ var myInit = {
 
 var myRequest = new Request("http://localhost:2000/api/estatisticas/chart", myInit);
 
-// Initialize the chart with empty data first
+
 const ctx = document.getElementById('myChart');
-let month = ['Atual']; // Since we're showing current data
+let month = ['Atual']; 
 
 let reports = [
     {
@@ -60,7 +60,7 @@ const myChart = new Chart(ctx, {
     }
 });
 
-// Function to update chart data
+
 function updateChartData() {
     fetch(myRequest)
         .then(function (response) {
@@ -86,11 +86,10 @@ function updateChartData() {
         });
 }
 
-// Initial update
+
 updateChartData();
 
-// Add event listener for the refresh button
 document.getElementById('refreshChart').addEventListener('click', updateChartData);
 
-// Optional: Update automatically every 30 seconds
+
 setInterval(updateChartData, 30000);

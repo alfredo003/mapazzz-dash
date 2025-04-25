@@ -37,11 +37,11 @@ class User
         }
     }
 
-     async find() {
+     async findAll() {
         const snapshot = await connectiondb.collection("users").get();
 
         return snapshot.docs.map((doc: QueryDocumentSnapshot) => ({
-            ...doc.data(),
+            data:doc.data(),
             uid: doc.id
        })
         );
@@ -54,7 +54,7 @@ class User
         return snapshot.docs.map((doc: QueryDocumentSnapshot) => {
             const data = doc.data();
             return {
-                ...data,
+                data:data,
                 uid: doc.id
             };
         });

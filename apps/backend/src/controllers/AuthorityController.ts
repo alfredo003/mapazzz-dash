@@ -55,7 +55,7 @@ export class AuthorityController {
 
             res.status(201).json({
                 message: "Authority created successfully",
-                uid: authorityId
+                user: authorityId
             });
 
         } catch (error) {

@@ -1,0 +1,76 @@
+<link rel="stylesheet" href="css/reports.css">
+
+<div class="content">
+<div class="card" style="--card-index: 1;">
+    <div class="card-header">
+        <h3>Casos Ativos</h3>
+        <div class="filter-controls">
+            <input type="text" class="form-control" placeholder="Buscar..." id="searchInput">
+            <select class="form-control" id="riskFilter">
+                <option value="">Todos os níveis de risco</option>
+                <option value="alto">Alto</option>
+                <option value="medio">Médio</option>
+                <option value="baixo">Baixo</option>
+            </select>
+            <button class="btn btn-outline btn-sm" id="refreshActiveCases">
+                <i class="fas fa-sync-alt"></i> Atualizar
+            </button>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table id="activeCasesTable">
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Localização</th>
+                        <th>Nível de Risco</th>
+                        
+                        <th>Estado</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                
+            </table>
+        </div>
+        <div class="pagination">
+            <button class="btn btn-outline btn-sm" id="prevPage" disabled>
+                <i class="fas fa-chevron-left"></i> Anterior
+            </button>
+            <span class="page-info">Página <span id="currentPage">1</span> de <span id="totalPages">1</span></span>
+            <button class="btn btn-outline btn-sm" id="nextPage">
+                Próximo <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="card" style="--card-index: 1;">
+    <div class="card-header">
+        <h3>Casos Resolvidos</h3>
+        <div>
+            <button class="btn btn-outline btn-sm" id="refreshActiveCases"><i class="fas fa-sync-alt"></i> Atualizar</button>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table id="activeCasesTable">
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Localização</th>
+                        <th>Nível de Risco</th>
+                        <th>Estado</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+              
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</div>

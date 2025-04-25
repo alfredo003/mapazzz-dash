@@ -1,10 +1,10 @@
-// Variáveis globais
+
 let riskChart;
 let institutionsData = JSON.parse(localStorage.getItem('institutions')) || [];
 let blogsData = JSON.parse(localStorage.getItem('blogs')) || [];
 let awardsData = JSON.parse(localStorage.getItem('awards')) || [];
 
-// Função para verificar autenticação
+
 function checkAuth() {
     if (typeof firebase !== 'undefined' && firebase.auth) {
         return firebase.auth().currentUser !== null;
@@ -12,7 +12,6 @@ function checkAuth() {
     return true;
 }
 
-// Função para carregar os dados dos relatórios
 async function loadReportsData() {
     try {
         const response = await fetch('/api/reports/statistics');

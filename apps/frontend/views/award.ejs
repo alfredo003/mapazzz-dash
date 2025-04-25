@@ -18,7 +18,7 @@
 
   <!-- Awards Page -->
   <div id="awards-page" class="page active">
- 
+   
     <div class="card mb-4" style="--card-index: 0;">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h3 class="mb-0">Adicionar Novo Prêmio</h3>
@@ -77,7 +77,10 @@
     <div class="card" style="--card-index: 1;">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h3 class="mb-0">Lista de Prêmios</h3>
-        <div class="d-flex gap-2">
+        <div style="display: flex; gap: 3rem;">
+          <button class="btn btn-success"  onclick="openClaimModal()">
+            <i class="fas fa-cart-plus me-2"></i> Saque de Prêmio
+          </button>
           <div class="input-group">
             <input type="text" class="form-control" id="searchAwards" placeholder="Buscar prêmios...">
           
@@ -182,7 +185,6 @@
   </div>
 </div>
 
-
 <div class="modal-overlay" id="deleteModalOverlay">
   <div class="modal-content" style="max-width: 400px;">
       <h2><i class="fas fa-exclamation-triangle text-danger"></i> Confirmar Exclusão</h2>
@@ -195,6 +197,26 @@
                   <i class="fas fa-trash"></i> Confirmar Exclusão
               </button>
               <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">
+                  <i class="fas fa-times"></i> Cancelar
+              </button>
+          </div>
+      </form>
+  </div>
+</div>
+
+<div class="modal-overlay" id="claimModalOverlay">
+  <div class="modal-content" style="max-width: 600px;">
+      <h2><i class="fas fa-tag"></i> Reivindicar Prêmios </h2>
+      <form class="needs-validation" action="/premiacoes/search" method="POST">
+          <div class="form-group">
+              <label for="claimcode">Código de Saque</label>
+              <input type="text" id="claimcode" name="claimcode" class="form-control" required>
+          </div>
+          <div class="form-group mt-4">
+              <button type="submit" class="btn btn-success">
+                  <i class="fas fa-search"></i> Verificar 
+              </button>
+              <button type="button" class="btn btn-secondary" onclick="closeClaimModal()">
                   <i class="fas fa-times"></i> Cancelar
               </button>
           </div>
@@ -301,8 +323,37 @@
               });
           }
           deleteModal.addEventListener('click', closeDeleteModal);
-      }
+      };
   
+      window.openClaimModal = function() {
+          try {
+              const modal = document.getElementById('claimModalOverlay');
+              if (!modal) {
+                  console.error('Modal element not found');
+                  return;
+              }
+
+              modal.style.display = 'flex';
+              setTimeout(() => {
+                  modal.classList.add('active');
+              }, 10);
+          } catch (error) {
+              console.error('Error opening modal:', error);
+          }
+      
+        }
+
+      window.closeClaimModal = function() {
+          const modal = document.getElementById('claimModalOverlay');
+          if (modal) {
+              modal.classList.remove('active');
+              setTimeout(() => {
+                  modal.style.display = 'none';
+              }, 300);
+          }
+      };
+
+      
   });
   </script>
   

@@ -2,6 +2,8 @@ import {connectiondb} from "../database/firebase";
 import { QueryDocumentSnapshot, Timestamp } from "firebase-admin/firestore";
 import * as admin from 'firebase-admin';
 
+import nodemailer from 'nodemailer';
+
 interface AuthorityData {
     name: string;
     photo: string;
@@ -35,6 +37,7 @@ class Authority
         return doc.data();
     }
 
+
     async create(data: Omit<AuthorityData, 'createdAt' | 'resolvedCases'> & { password: string }) {
         try {
             const userRecord = await admin.auth().createUser({
@@ -42,7 +45,7 @@ class Authority
                 password: data.password,
                 displayName: data.name
             });
-
+            
             const docRef = await connectiondb.collection("authorities").add({
                 name:  data.name,
                 photo: data.photo,
@@ -56,7 +59,8 @@ class Authority
                 createdAt: Timestamp.now() 
             });
 
-            return docRef;
+           
+            return userRecord;
         } catch (error) {
             console.error('Error creating authority:', error);
             throw error;

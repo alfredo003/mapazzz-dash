@@ -1,11 +1,11 @@
 const firebaseConfig = {
-    apiKey: "AIzaSyDG4Yh4PJUKcesMFwrT_Ij80ytwAC9NdP0",
-    authDomain: "mapazzz-f3710.firebaseapp.com",
-    projectId: "mapazzz-f3710",
-    storageBucket: "mapazzz-f3710.firebasestorage.app",
-    messagingSenderId: "651181150618",
-    appId: "1:651181150618:web:ace0651cfe3120e115ea23",
-    measurementId: "G-3VBNWW2ZJ0"
+  apiKey: "AIzaSyAX7PCdIpNTZAYXi6viASwt_4qS9znpQYY",
+  authDomain: "mapzzz-62a4f.firebaseapp.com",
+  projectId: "mapzzz-62a4f",
+  storageBucket: "mapzzz-62a4f.firebasestorage.app",
+  messagingSenderId: "734479508053",
+  appId: "1:734479508053:web:e6bf134dfdb033a95daadc",
+  measurementId: "G-07LZMHE6GL"
 };
 
 // Initialize Firebase

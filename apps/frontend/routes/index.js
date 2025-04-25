@@ -12,6 +12,7 @@ const { authenticateUser } = require('../middleware/auth');
 
 const router = Router();
 
+
 router.use('/', authRouter);
 
 router.use('/premiacoes', authenticateUser, awardRouter);

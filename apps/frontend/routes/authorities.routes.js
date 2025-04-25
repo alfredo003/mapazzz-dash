@@ -2,14 +2,13 @@ const express = require('express');
 const authoritiesRoutes = express.Router();
 const makeAuthenticatedRequest  = require('../helpers/AuthReq');
 const { getInstitutionIcon, formatInstitutionType } = require('../helpers/viewHelpers');
+const auth = require('./../config/firebase-config');
 
 authoritiesRoutes.get('/', async (req, res) => {
     try {
         const response = await makeAuthenticatedRequest(req.session.token, 'GET', '/autoridades');
-        
         const institutions = response.authorities;
         
-     
         res.render('authorities', { 
             title: 'MapaZZZ - Instituições', 
             layout: './layouts/dashboard',
@@ -44,13 +43,15 @@ authoritiesRoutes.get('/', async (req, res) => {
     }
  }); 
  
- authoritiesRoutes.post('/', async (req, res) => {
+authoritiesRoutes.post('/', async (req, res) => {
      try {
          const { name,email, type, address, contact, location } = req.body;
          
          const authorityData = { name, email, type, address, contact, location };
-         await makeAuthenticatedRequest(req.session.token, 'POST', '/autoridades', authorityData);
-         
+        const result = await makeAuthenticatedRequest(req.session.token, 'POST', '/autoridades', authorityData);
+        const user =result.user;
+
+     
          req.flash('success', 'Instituição cadastrada com sucesso!');
          res.redirect('/instituicoes');
      } catch (error) {

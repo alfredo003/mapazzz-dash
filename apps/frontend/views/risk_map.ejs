@@ -1,5 +1,7 @@
 <link rel="stylesheet" href="css/reports.css">
 
+
+
    <style>
         /* Estatísticas do Mapa */
 .stats-grid {
@@ -87,7 +89,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card" style="--card-index: 0;">
+                    <div class="card" style="--card-index: 0;"> 
                         <div class="card-header">
                             <h3>Zonas de Risco</h3>
                             <div class="filter-controls">
@@ -111,105 +113,6 @@
                 </div>
             </div>
 
-          
+         
 
-            <script>
-                // Adicionar event listeners para os filtros
-document.getElementById('riskLevelFilter').addEventListener('change', filterMap);
-document.getElementById('dateFilter').addEventListener('change', filterMap);
-
-// Função para filtrar o mapa
-function filterMap() {
-    const riskLevel = document.getElementById('riskLevelFilter').value;
-    const date = document.getElementById('dateFilter').value;
-    
-    let filteredData = [...reportsData];
-    
-    if (riskLevel !== 'all') {
-        filteredData = filteredData.filter(item => item.riskLevel === parseInt(riskLevel));
-    }
-    
-    if (date) {
-        const selectedDate = new Date(date);
-        filteredData = filteredData.filter(item => {
-            const itemDate = new Date(item.createdAt);
-            return itemDate.toDateString() === selectedDate.toDateString();
-        });
-    }
-    
-    updateMap(filteredData);
-    updateMapStats(filteredData);
-}
-
-// Função para atualizar as estatísticas do mapa
-function updateMapStats(data) {
-    const totalCases = data.length;
-    const highRiskCases = data.filter(item => item.riskLevel === 3).length;
-    const mediumRiskCases = data.filter(item => item.riskLevel === 2).length;
-    const lowRiskCases = data.filter(item => item.riskLevel === 1).length;
-    
-    document.getElementById('totalCases').textContent = totalCases;
-    document.getElementById('highRiskCases').textContent = highRiskCases;
-    document.getElementById('mediumRiskCases').textContent = mediumRiskCases;
-    document.getElementById('lowRiskCases').textContent = lowRiskCases;
-}
-
-// Modificar a função updateMap para usar cores diferentes por nível de risco
-function updateMap(data) {
-    if (!map) return;
-    
-    map.eachLayer(layer => {
-        if (layer instanceof L.Marker || layer instanceof L.CircleMarker) {
-            map.removeLayer(layer);
-        }
-    });
-    
-    const validMarkers = [];
-    data.forEach(item => {
-        if (item.latitude && item.longitude && !isNaN(parseFloat(item.latitude)) && !isNaN(parseFloat(item.longitude))) {
-            const lat = parseFloat(item.latitude);
-            const lng = parseFloat(item.longitude);
-            
-            let color;
-            switch(item.riskLevel) {
-                case 3:
-                    color = '#c62828'; // Vermelho para alto risco
-                    break;
-                case 2:
-                    color = '#ef6c00'; // Laranja para médio risco
-                    break;
-                default:
-                    color = '#2e7d32'; // Verde para baixo risco
-            }
-            
-            const opacity = item.riskLevel === 3 ? 0.8 : item.riskLevel === 2 ? 0.6 : 0.4;
-            
-            L.circleMarker([lat, lng], {
-                radius: item.riskLevel === 3 ? 12 : item.riskLevel === 2 ? 10 : 8,
-                fillColor: color,
-                color: '#000',
-                weight: 1,
-                opacity: 1,
-                fillOpacity: opacity
-            }).addTo(map).bindPopup(`
-                <div class="map-popup">
-                    <h4>${item.title || 'Sem título'}</h4>
-                    <p><strong>Local:</strong> ${item.location || 'N/A'}</p>
-                    <p><strong>Risco:</strong> <span class="risk-badge risk-${item.riskLevel === 3 ? 'alto' : item.riskLevel === 2 ? 'medio' : 'baixo'}">
-                        ${item.riskLevel === 3 ? 'Alto' : item.riskLevel === 2 ? 'Médio' : 'Baixo'}
-                    </span></p>
-                    <p><strong>Data:</strong> ${item.createdAt ? new Date(item.createdAt).toLocaleDateString() : 'N/A'}</p>
-                </div>
-            `);
-            
-            validMarkers.push([lat, lng]);
-        }
-    });
-    
-    if (validMarkers.length > 0) {
-        map.fitBounds(validMarkers);
-    } else {
-        map.setView([-8.9308, 13.2017], 12);
-    }
-}
-            </script>
+           

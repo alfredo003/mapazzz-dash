@@ -34,11 +34,11 @@ authRouter.post('/login', async (req, res) => {
         const userData = await makeAuthenticatedRequest(req.session.token, 'GET', `/usuarios/${req.session.userId}`);
         const role = userData.userData[0].role;
         
-        if(!role || role !== 'admin')
+       /* if(!role || role !== 'admin')
         {
             req.flash('error', "Acesso negado!");
             res.redirect('/login');
-        }
+        }*/
 
         res.redirect('/home');
     } catch (error) {

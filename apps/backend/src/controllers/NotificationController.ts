@@ -35,7 +35,7 @@ export class NotificationController
             console.error('Error sending notification:', error);
             return res.status(500).json({ error: 'Internal server error' });
         }
-    }
+    } 
 
     static async findAll(req: Request, res: Response) {
         try {
