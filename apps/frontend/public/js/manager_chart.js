@@ -1,62 +1,96 @@
 var myHeaders = new Headers();
 
-var myInit = {
+var myInit = { 
   method: "GET",
   headers: myHeaders,
 };
 
-var myRequest = new Request("http://localhost:2000/api/estatisticas", myInit);
+var myRequest = new Request("http://localhost:2000/api/estatisticas/chart", myInit);
 
-const test = fetch(myRequest)
-  .then(function (response) {
-    if (!response.ok) {
-     
-      throw new Error("Network response was not ok " + response.statusText);
-    }
-    return response.json(); 
-  })
-  .then(function (data) {
-    console.log(data);
-  })
-  .catch(function (error) {
-    console.log("There was a problem with the fetch operation:", error); 
-  });
-
-
-
+// Initialize the chart with empty data first
 const ctx = document.getElementById('myChart');
+let month = ['Atual']; // Since we're showing current data
 
-let month = ['Abril', 'Maio', 'Junho'];
-
-let reports  = [
+let reports = [
     {
-        label: 'Nº de Zonas de Baixos risco',
-        data: [1],
+        label: 'Nº de Zonas de Baixo risco',
+        data: [0],
         borderWidth: 1,
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        borderColor: 'rgba(75, 192, 192, 1)'
     },
     {
         label: 'Nº de Zonas de Médio risco',
-        data: [3],
+        data: [0],
         borderWidth: 1,
+        backgroundColor: 'rgba(255, 206, 86, 0.2)',
+        borderColor: 'rgba(255, 206, 86, 1)'
     },
     {
         label: 'Nº de Zonas de Alto risco',
-        data: [3],
+        data: [0],
         borderWidth: 1,
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderColor: 'rgba(255, 99, 132, 1)'
     }
 ];
 
-new Chart(ctx, {
+const myChart = new Chart(ctx, {
     type: 'bar',
     data: {
-    labels: month,
-    datasets: reports
+        labels: month,
+        datasets: reports
     },
-        options: {
+    options: {
         scales: {
             y: {
                 beginAtZero: true
             }
+        },
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top',
+            },
+            title: {
+                display: true,
+                text: 'Distribuição de Zonas por Nível de Risco'
+            }
         }
     }
 });
+
+// Function to update chart data
+function updateChartData() {
+    fetch(myRequest)
+        .then(function (response) {
+            if (!response.ok) {
+                throw new Error("Network response was not ok " + response.statusText);
+            }
+            return response.json();
+        })
+        .then(function (data) {
+           
+            const baixoRisco = data.statistics.reportLowCount || 0;
+            const medioRisco = data.statistics.reportMediumCount || 0;
+            const altoRisco = data.statistics.reportHighCount || 0;
+
+            console.log(baixoRisco,medioRisco,altoRisco);
+            myChart.data.datasets[0].data = [baixoRisco];
+            myChart.data.datasets[1].data = [medioRisco];
+            myChart.data.datasets[2].data = [altoRisco];
+            myChart.update();
+        })
+        .catch(function (error) {
+            console.log("There was a problem with the fetch operation:", error);
+        });
+}
+
+// Initial update
+updateChartData();
+
+// Add event listener for the refresh button
+document.getElementById('refreshChart').addEventListener('click', updateChartData);
+
+// Optional: Update automatically every 30 seconds
+setInterval(updateChartData, 30000);

@@ -25,7 +25,7 @@ export class StatisticController {
            
             const zoneRisks = new Report();
             const zoneRisk = await zoneRisks.findZones();
-            const zoneRiskCount = zoneRisk.length;
+            const zoneRiskCount = zoneRisk[0].zones.length;
 
             res.status(200).json({
                 statistics: {

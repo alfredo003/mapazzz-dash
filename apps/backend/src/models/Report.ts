@@ -47,16 +47,24 @@ class Report
 
         return snapshot.docs.map((doc: QueryDocumentSnapshot) => {
             const data = doc.data();
-            return {
-                ...data,
-                uid: doc.id
-            };
+            return { zones: data.zones };
         });
     }
 
     async findByRisk(level:string) {
+
+        let levelName = 0;
+
+        if(level == "low"){
+            levelName = 1;
+        }else if(level == "medium"){
+            levelName = 2;
+        }else if(level == "high"){
+            levelName = 3;
+        }
+
         const snapshot = await connectiondb.collection("reports")
-            .where("riskLevel", "==", level)
+            .where("riskLevel", "==", levelName)
             .get();
         return snapshot.docs.map((doc: QueryDocumentSnapshot) => {
             const data = doc.data();
