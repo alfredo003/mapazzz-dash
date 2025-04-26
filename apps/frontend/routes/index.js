@@ -14,7 +14,6 @@ const router = Router();
 
 
 router.use('/', authRouter);
-
 router.use('/premiacoes', authenticateUser, awardRouter);
 router.use('/blog', authenticateUser, blogsRouter);
 router.use('/reportagens', authenticateUser, reportsRouter);

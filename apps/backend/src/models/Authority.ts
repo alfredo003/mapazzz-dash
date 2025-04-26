@@ -2,17 +2,14 @@ import {connectiondb} from "../database/firebase";
 import { QueryDocumentSnapshot, Timestamp } from "firebase-admin/firestore";
 import * as admin from 'firebase-admin';
 
-import nodemailer from 'nodemailer';
 
 interface AuthorityData {
     name: string;
     photo: string;
     address: string;
-    location: string;
     type:string;
     email: string;
     contact: string;
-    idUser:string;
     resolvedCases: number;
     createdAt: Timestamp;
 }
@@ -45,20 +42,29 @@ class Authority
                 password: data.password,
                 displayName: data.name
             });
-            
+
             const docRef = await connectiondb.collection("authorities").add({
                 name:  data.name,
                 photo: data.photo,
                 address: data.address,
-                location: data.location, 
                 type:data.type,
                 email:  data.email,
                 contact: data.contact,
-                idUser:userRecord.uid,
+                uid:userRecord.uid,
                 resolvedCases: 0,
                 createdAt: Timestamp.now() 
             });
-
+ 
+            const docRefUser = await connectiondb.collection("users").add({
+                name:  data.name,
+                address: data.address,
+                type:data.type,
+                email:  data.email,
+                contact: data.contact,
+                uid:userRecord.uid,
+                role:"authority",
+                createdAt: Timestamp.now() 
+            });
            
             return userRecord;
         } catch (error) {

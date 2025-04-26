@@ -28,36 +28,35 @@ export class AuthorityController {
             });
         }
     }
-
+ 
     static async create(req: Request, res: Response) {
         try {
-            const { name, email, type, address, location, contact } = req.body;
+            const { name, email, type, address, contact } = req.body; 
             
-            if (!name || !email || !contact || !type || !address || !location) {
+            console.log(name,email,type,address,contact);
+            /*if (!name || !email) {
                 return res.status(400).json({
                     error: "Missing required fields",
-                    message: "Name, email and tel are required"
+                    message: "Name, email are required"
                 });
-            }
+            }*/
 
-            const authority = new Authority();
+          /*  const authority = new Authority();
             const authorityId = await authority.create({
                 name,
                 photo:"",
                 address,
-                location,
                 type,
                 email,
                 contact,
-                password:"123456",
-                idUser: ""
+                password:"123456"
             });
 
             res.status(201).json({
                 message: "Authority created successfully",
                 user: authorityId
-            });
-
+            }); */
+            
         } catch (error) {
             console.error('Error creating authority:', error);
             res.status(500).json({

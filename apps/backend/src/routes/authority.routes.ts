@@ -8,4 +8,4 @@ authorityRouter.post('/', AuthorityController.create as RequestHandler);
 authorityRouter.get('/:uid', AuthorityController.getById as RequestHandler);
 
 
-export default authorityRouter;
+export default authorityRouter; 

@@ -9,7 +9,7 @@ import { authenticateToken } from '../middleware/auth';
 import awardRouter from './award.routes';
 
 const routes = Router();
-
+ 
 routes.use('/reportagens', authenticateToken, reportRouter);
 routes.use('/autoridades', authenticateToken, authorityRouter);
 routes.use('/blog', blogRouter);
