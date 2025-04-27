@@ -1,34 +1,54 @@
 const express = require('express')
 const expressLayouts = require('express-ejs-layouts')
-const session = require('express-session')
+const cookieSession = require('cookie-session');
 const flash = require('connect-flash')
 const { authenticateUser } = require('./middleware/auth')
-
+const path = require('path');
 const router = require('./routes/index');
-
+const helmet = require('helmet');
 const makeAuthenticatedRequest = require('./helpers/AuthReq');
 const app = express()
 const port = 2001
 
+app.use(
+    helmet.contentSecurityPolicy({
+      useDefaults: false,
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", 'https://vercel.live', 'https://www.gstatic.com', 'https://cdn.jsdelivr.net', "'nonce-abc123'"],
+        scriptSrcElem: ["'self'", "'unsafe-inline'", "https://vercel.live", "https://www.gstatic.com"],
+        styleSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com"],
+        styleSrcElem: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com"],
+        fontSrc: ["'self'", "https://cdnjs.cloudflare.com"],
+        imgSrc: ["'self'", "data:", "https:"],
+        connectSrc: ["'self'", "https://*.firebaseio.com", "https://*.googleapis.com"],
+        frameSrc: ["'self'", "https://vercel.live"],
+        objectSrc: ["'none'"]
+      }
+    })
+  );
   
 app.use(express.urlencoded({ extended: true })); 
 app.use(express.json()); 
 
-app.use(session({
-    secret: 'your-secret-key',
-    resave: false,
-    saveUninitialized: false,
-    cookie: { secure: process.env.NODE_ENV === 'production' }
-}))
+app.use(
+    cookieSession({
+      name: 'session',
+      keys: [process.env.SESSION_SECRET || 'sua_chave_secreta'], 
+      maxAge: 24 * 60 * 60 * 1000,
+      secure: process.env.NODE_ENV === 'production',
+      httpOnly: true,
+      sameSite: 'strict',
+    })
+  );
 
-app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(flash())
 
-app.use(express.static('public'))
-
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(expressLayouts)
-app.set('layout', './layouts/full-width')
+app.set('layout', path.join(__dirname, 'views', 'layouts', 'full-width'));
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs')
 
 
@@ -146,4 +166,6 @@ app.get('/mynotify',authenticateUser, (req, res) => {
 
 app.use('/', router);
 
-app.listen(port, () => console.info(`App listening on port ${port}`))
+app.listen(port, () => {
+    console.log(`Server is running on http://localhost:${port}`)
+})

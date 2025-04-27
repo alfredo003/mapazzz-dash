@@ -8,10 +8,9 @@ const firebaseConfig = {
   projectId: "mapzzz-62a4f",
   storageBucket: "mapzzz-62a4f.firebasestorage.app",
   messagingSenderId: "734479508053",
-  appId: "1:734479508053:web:e6bf134dfdb033a95daadc",
-  measurementId: "G-07LZMHE6GL"
+  appId: "1:734479508053:web:d49266f8edb0b00c5daadc",
+  measurementId: "G-2VJXH4VKLB"
 };
-
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 

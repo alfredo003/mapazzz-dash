@@ -52,7 +52,7 @@ authRouter.post('/login', async (req, res) => {
         }
         
         req.flash('error', errorMessage);
-        res.redirect('/login');
+        res.redirect('/login'); 
     }
 })
 

@@ -5,7 +5,7 @@ var myInit = {
   headers: myHeaders,
 };
 
-var myRequest = new Request("http://localhost:2000/api/estatisticas/chart", myInit);
+var myRequest = new Request("https://backend-livid-iota.vercel.app/api/estatisticas/chart", myInit);
 
 
 const ctx = document.getElementById('myChart');
