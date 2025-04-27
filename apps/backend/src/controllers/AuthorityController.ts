@@ -31,19 +31,20 @@ export class AuthorityController {
  
     static async create(req: Request, res: Response) {
         try {
-            const { name, email, type, address, contact } = req.body; 
+            const { name, email, type, address, contact,uid } = req.body; 
             
-            console.log(name,email,type,address,contact);
-            /*if (!name || !email) {
+            
+            if (!name || !email) {
                 return res.status(400).json({
                     error: "Missing required fields",
                     message: "Name, email are required"
                 });
-            }*/
+            }
 
-          /*  const authority = new Authority();
+           const authority = new Authority();
             const authorityId = await authority.create({
                 name,
+                uid:uid,
                 photo:"",
                 address,
                 type,
@@ -55,7 +56,7 @@ export class AuthorityController {
             res.status(201).json({
                 message: "Authority created successfully",
                 user: authorityId
-            }); */
+            }); 
             
         } catch (error) {
             console.error('Error creating authority:', error);

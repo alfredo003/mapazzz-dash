@@ -48,19 +48,22 @@ authoritiesRoutes.get('/', async (req, res) => {
 authoritiesRoutes.post('/', async (req, res) => {
      try {
          const { name,email, type, address, contact } = req.body;
-         const password = '123456';
+
+        const password = '123456';
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
         const actionCodeSettings = {
-            url: 'https://seusite.com/login',
+            url: 'https://burger-order-screen.vercel.app/',
             handleCodeInApp: false
           };
 
-        await sendEmailVerification(user, actionCodeSettings);
-         
-        const authorityData = { name, email, type, address, contact };
+         await sendEmailVerification(user, actionCodeSettings);
+
+         const authorityData = { name, email, type, address, contact,uid:user.uid };
          await makeAuthenticatedRequest(req.session.token, 'POST', '/autoridades', authorityData);
+
+       
 
          req.flash('success', 'Instituição cadastrada com sucesso!');
          res.redirect('/instituicoes');

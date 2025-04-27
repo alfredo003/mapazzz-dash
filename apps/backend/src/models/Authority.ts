@@ -10,6 +10,7 @@ interface AuthorityData {
     type:string;
     email: string;
     contact: string;
+    uid:string;
     resolvedCases: number;
     createdAt: Timestamp;
 }
@@ -37,11 +38,6 @@ class Authority
 
     async create(data: Omit<AuthorityData, 'createdAt' | 'resolvedCases'> & { password: string }) {
         try {
-            const userRecord = await admin.auth().createUser({
-                email: data.email,
-                password: data.password,
-                displayName: data.name
-            });
 
             const docRef = await connectiondb.collection("authorities").add({
                 name:  data.name,
@@ -50,7 +46,7 @@ class Authority
                 type:data.type,
                 email:  data.email,
                 contact: data.contact,
-                uid:userRecord.uid,
+                uid:data.uid,
                 resolvedCases: 0,
                 createdAt: Timestamp.now() 
             });
@@ -61,12 +57,12 @@ class Authority
                 type:data.type,
                 email:  data.email,
                 contact: data.contact,
-                uid:userRecord.uid,
+                uid:data.uid,
                 role:"authority",
                 createdAt: Timestamp.now() 
             });
            
-            return userRecord;
+            return docRefUser;
         } catch (error) {
             console.error('Error creating authority:', error);
             throw error;
