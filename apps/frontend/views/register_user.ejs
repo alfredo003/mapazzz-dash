@@ -1,5 +1,5 @@
-<link rel="stylesheet" href="css/reports.css">
-<link rel="stylesheet" href="css/register_user.css">
+<link rel="stylesheet" href="/css/reports.css">
+<link rel="stylesheet" href="/css/register_user.css">
 <div class="content">
 
     <% if(messages.success && messages.success.length > 0) { %>
@@ -7,7 +7,7 @@
           <span class="message"><%= messages.success %></span>
           <button class="close-btn" onclick="closeAlert(this.parentElement)">&times;</button>
         </div>
-      <% } %>
+      <% } %> 
       <% if(messages.error && messages.error.length > 0) { %>
         <div id="error-alert" class="alert alert-danger">
           <span class="message"><%= messages.error %></span>
@@ -23,7 +23,7 @@
                 <h3><i class="fas fa-user-plus"></i> Adicionar Novo Utilizador</h3>
             </div>
             <div class="card-body">
-                <form id="userForm" class="needs-validation" action="/register" method="POST">
+                <form id="userForm" class="needs-validation" action="/users/register" method="POST">
                     <!-- Nome -->
                     <div class="form-group">
                         <label for="name">Nome</label>

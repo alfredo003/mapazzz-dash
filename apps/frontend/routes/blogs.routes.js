@@ -66,6 +66,24 @@ blogsRouter.post('/', upload.single('file'),async (req, res) => {
 
         const blogData = { title, content, imageUrl: photoUrl };
         await makeAuthenticatedRequest(req.session.token, 'POST', '/blog', blogData);
+
+        const notf_message = `Novo blog adicionado`;
+        const userId = req.session.userId || "1"; 
+        const restut1 = await makeAuthenticatedRequest(req.session.token, 'GET', '/notificacoes/fcm');
+        const tokens = restut1[0].token;
+    
+        const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+          for (const token of tokens) {
+           try {
+               console.log(token);
+               const Data = { notf_message,title, token,userId }
+               const restut = await makeAuthenticatedRequest(req.session.token, 'POST', '/notificacoes/send', Data);
+             console.log(`Enviado com sucesso: ${restut}`);
+           } catch (error) {
+             console.error(`Erro ao enviar o token ${token}:`, error.message);
+           }
+           await delay(1000);
+         }
         
         req.flash('success', 'Conteudo adicionado com sucesso!');
         res.redirect('/blog');

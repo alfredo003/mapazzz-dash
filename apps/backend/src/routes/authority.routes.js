@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const AuthorityController_1 = require("../controllers/AuthorityController");
+const authorityRouter = (0, express_1.Router)();
+authorityRouter.get('/', AuthorityController_1.AuthorityController.getAll);
+authorityRouter.post('/', AuthorityController_1.AuthorityController.create);
+authorityRouter.get('/:uid', AuthorityController_1.AuthorityController.getById);
+authorityRouter.delete('/:uid', AuthorityController_1.AuthorityController.delete);
+exports.default = authorityRouter;

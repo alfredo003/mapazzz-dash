@@ -10,12 +10,12 @@ import awardRouter from './award.routes';
 
 const routes = Router();
  
-routes.use('/reportagens', authenticateToken, reportRouter);
+routes.use('/reportagens', reportRouter);
 routes.use('/autoridades', authorityRouter);
-routes.use('/blog', blogRouter);
+routes.use('/blog',authenticateToken, blogRouter);
 routes.use('/usuarios',authenticateToken, userRouter);
 routes.use('/estatisticas', statisticRouter);
 routes.use('/recompensas', awardRouter);
-routes.use('/notificacoes',notificationRoutes);
+routes.use('/notificacoes',authenticateToken,notificationRoutes);
  
 export default routes;

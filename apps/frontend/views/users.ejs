@@ -1,5 +1,5 @@
-<link rel="stylesheet" href="css/reports.css">
-<link rel="stylesheet" href="css/users.css">
+
+<link rel="stylesheet" href="/css/users.css">
 <div class="content">
     <div id="users-page" class="page active">
         <div class="card shadow-sm" style="--card-index: 0;">
@@ -8,12 +8,12 @@
                  
                     <div class="d-flex gap-2">
                       
-                        <a class="btn btn-primary d-flex align-items-center gap-2" style="text-decoration: none;" href="/register">
+                        <a class="btn btn-primary d-flex align-items-center gap-2" style="text-decoration: none;" href="/users/register">
                             <i class="fas fa-plus"></i>
                             <span>Adicionar Utilizador</span>
                         </a>
                     </div>
-                </div>
+                </div> 
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -27,12 +27,12 @@
                                     </div>
                                 </th>
                                 <th class="border-0">
-                                    <div class="d-flex align-items-center gap-7">
+                                    <div class="d-flex align-items-center">
                                         Nome
                                         <i class="fas fa-sort text-muted"></i>
                                     </div>
                                 </th>
-                                <th class="border-0" style="width: 25%">
+                                <th class="border-0" >
                                     <div class="d-flex align-items-center gap-2">
                                         Email
                                         <i class="fas fa-sort text-muted"></i>
@@ -50,12 +50,7 @@
                                         <i class="fas fa-sort text-muted"></i>
                                     </div>
                                 </th>
-                                <th class="border-0" style="width: 15%">
-                                    <div class="d-flex align-items-center gap-2">
-                                        Último Acesso
-                                        <i class="fas fa-sort text-muted"></i>
-                                    </div>
-                                </th>
+                                
                                 <th class="border-0 text-end" style="width: 10%">Ações</th>
                             </tr>
                         </thead>
@@ -63,36 +58,31 @@
                             <% if (users && users.length > 0) { %>
                                 <% users.forEach(user => { %>
                             <tr>
-                                <td>#</td>
+                                <td>  <img src="/img/placeholder.webp" alt="User Avatar" class="user-avatar"></td>
                                 <td>
                                     <div class="d-flex align-items-center gap-2">
                                         <div class="avatar avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center">
                                            
                                         </div>
                                         <div>
-                                            <div class="fw-medium"><%= user.name %></div>
+                                            <div class="fw-medium"><b><%- user.data.name %></b> </div>
                 
                                         </div>
                                     </div>
                                 </td>
-                                <td><%= user.email %></td>
+                                <td><%= user.data.email %></td>
                                 <td>
-                                    <span class="user-badge user-<%= user.role === 'user' ? 'user' : user.role === 'admin' ? 'admin' : user.role === 'authorities' ? 'authorities' : '' %>">
-                                        <%= user.role === "user" ? 'Usuário' : user.role === "admin" ? 'Administrador' : user.role === "authorities" ? 'Autoridades' : '' %>
+                                    <span class="user-badge user-<%= user.data.role === 'user' ? 'user' : user.data.role === 'admin' ? 'admin' : user.data.role === 'authority' ? 'authority' : '' %>">
+                                        <%= user.data.role === "user" ? 'Usuário' : user.data.role === "admin" ? 'Administrador' : user.data.role === "authority" ? 'Autoridades' : '' %>
                                     </span>
                                     
                                 </td>
                                 <td>
                                     <div class="form-check form-switch">
-                                        Activo
+                                        <%=user.status%>
                                     </div>
                                 </td>
-                                <td>
-                                    <div class="d-flex flex-column">
-                                        <span>2024-04-19</span>
-                                        <small class="text-muted">15:30</small>
-                                    </div>
-                                </td>
+                               
                                 <td>
                                     <div class="btn-group">
                                         <button class="btn btn-sm btn-light" data-bs-toggle="modal" data-bs-target="#editUserModal" title="Editar">
@@ -227,5 +217,3 @@
         </div>
     </div>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>

@@ -44,7 +44,7 @@ class AwardController {
           const claimed = user.data.rewards;
           const foundClaim = claimed.find((data: { claimCode: string }) => data.claimCode === claimcode);
             
-         if (foundClaim) {
+         if (foundClaim && foundClaim.status !== 'claimed') {
                 return res.status(200).json(user);
             }
         }
@@ -83,14 +83,6 @@ class AwardController {
                 points:convetPoint,
                 title,
             });
-
-            const dataNofity = {
-                title:"Novo prêmio Mapazzz",
-                message:title
-            }
-           
-            const resultNotify = (new Notification(dataNofity.title,dataNofity.message))
-            await resultNotify.sendPush();
 
             res.status(201).json({
                 message: "award created successfully",

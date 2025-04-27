@@ -67,6 +67,23 @@ awardRouter.post('/', upload.single('file'), async (req, res) => {
         
         await makeAuthenticatedRequest(req.session.token, 'POST', '/recompensas', awardData);
         
+        const notf_message = `Novo Prêmio adicionado`;
+        const userId = req.session.userId || "1"; 
+        const restut1 = await makeAuthenticatedRequest(req.session.token, 'GET', '/notificacoes/fcm');
+        const tokens = restut1[0].token;
+    
+        const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+          for (const token of tokens) {
+           try {
+               console.log(token);
+               const Data = { notf_message,title, token,userId }
+               const restut = await makeAuthenticatedRequest(req.session.token, 'POST', '/notificacoes/send', Data);
+             console.log(`Enviado com sucesso: ${restut}`);
+           } catch (error) {
+             console.error(`Erro ao enviar o token ${token}:`, error.message);
+           }
+           await delay(1000);
+         }
         req.flash('success', 'premiacoes cadastrada com sucesso!');
         res.redirect('/premiacoes');
     } catch (error) {
@@ -83,7 +100,7 @@ awardRouter.post('/search', async (req, res) => {
         
         const user = await makeAuthenticatedRequest(req.session.token, 'GET', `/recompensas/search/${claimcode}`);
  
-        return res.redirect(`/reivindicar/${user.uid}`);
+       res.redirect(`/reivindicar/?user=${user.uid}&claimcode=${claimcode}`);
        
     } catch (error) {
         req.flash('error', 'Este codigo não esta disponivel');

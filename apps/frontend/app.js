@@ -26,41 +26,11 @@ app.use(express.json())
 app.use(flash())
 
 app.use(express.static('public'))
-app.use('/css', express.static(__dirname + '/public/css'))
-app.use('/js', express.static(__dirname + '/public/js'))
-app.use('/img', express.static(__dirname + '/public/img'))
 
 app.use(expressLayouts)
 app.set('layout', './layouts/full-width')
 app.set('view engine', 'ejs')
 
-app.get('/reivindicar/:user',authenticateUser, async (req, res) => {
-
-    const user = req.params.user;
-
-    try {
-        const result = await makeAuthenticatedRequest(req.session.token, 'GET', `/usuarios/${user}`);
-        const users = result.data;
-        res.render('reaward', { 
-            title: 'Mapazzz - Perfil', 
-            layout: './layouts/dashboard',
-            user: {
-                email: req.session.userEmail
-            },
-            messages: {
-                success: req.flash('success'),
-                error: req.flash('error')
-            },
-            user: users,
-            rewardsHistory:[]
-        });
-    } catch (error) {
-        console.error('Error creating Utilizador:', error);
-        req.flash('error', 'Erro ao cadastrar Utilizador. Por favor, verifique o formulário.');
-        res.redirect('/register');
-    }
-   
-});
 
 app.get('/redifinir', authenticateUser, (req, res) => {
 
@@ -172,39 +142,6 @@ app.get('/mynotify',authenticateUser, (req, res) => {
     });
 });
 
-
-
-app.get('/register', (req, res) => {
-
-    res.render('register_user', { 
-        title: 'Mapazzz - Registrar Utilizador', 
-        layout: './layouts/dashboard',
-        user: {
-            email: req.session.userEmail
-        },
-        messages: {
-            success: req.flash('success'),
-            error: req.flash('error')
-        }
-    });
-});
-
-app.post('/register', async(req, res) => {
-
-    try {
-        const { name, email, phoneNumber,role} = req.body;
-        const password = "123456"
-        const authorityData = { name, email, phoneNumber, password, role };
-        await makeAuthenticatedRequest(req.session.token, 'POST', '/usuarios', authorityData);
-        
-        req.flash('success', 'Utilizador cadastrado com sucesso!');
-        res.redirect('/register');
-    } catch (error) {
-        console.error('Error creating Utilizador:', error);
-        req.flash('error', 'Erro ao cadastrar Utilizador. Por favor, verifique o formulário.');
-        res.redirect('/register');
-    }
-});
 
 
 app.use('/', router);

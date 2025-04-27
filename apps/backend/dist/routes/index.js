@@ -1,0 +1,23 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const report_routes_1 = __importDefault(require("./report.routes"));
+const authority_routes_1 = __importDefault(require("./authority.routes"));
+const blog_routes_1 = __importDefault(require("./blog.routes"));
+const user_routes_1 = __importDefault(require("./user.routes"));
+const statistic_routes_1 = __importDefault(require("./statistic.routes"));
+const notification_routes_1 = __importDefault(require("./notification.routes"));
+const auth_1 = require("../middleware/auth");
+const award_routes_1 = __importDefault(require("./award.routes"));
+const routes = (0, express_1.Router)();
+routes.use('/reportagens', report_routes_1.default);
+routes.use('/autoridades', authority_routes_1.default);
+routes.use('/blog', auth_1.authenticateToken, blog_routes_1.default);
+routes.use('/usuarios', auth_1.authenticateToken, user_routes_1.default);
+routes.use('/estatisticas', statistic_routes_1.default);
+routes.use('/recompensas', award_routes_1.default);
+routes.use('/notificacoes', auth_1.authenticateToken, notification_routes_1.default);
+exports.default = routes;

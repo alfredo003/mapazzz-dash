@@ -40,7 +40,7 @@ notificationRoutes.get('/', async(req, res) => {
 
 notificationRoutes.post('/', async (req, res) => {
     try {
-      
+        const userId = "1" ;
         const { title,message } = req.body;
 
      const restut1 = await makeAuthenticatedRequest(req.session.token, 'GET', '/notificacoes/fcm');

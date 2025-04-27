@@ -7,7 +7,10 @@ interface UserData {
     email: string,
     phoneNumber: string,
     role:string,
+    uid:string,
+    status:string,
     password:string
+      rewards?: Array<{ claimCode: string; status: string }>;
 }
 
 class User
@@ -15,18 +18,14 @@ class User
 
     async create(data: Omit<UserData, 'createdAt' | 'resolvedCases'> ) {
         try {
-            const userRecord = await admin.auth().createUser({
-                email: data.email,
-                password: data.password,
-                displayName: data.name
-            });
 
             const docRef = await connectiondb.collection("users").add({
                 name:  data.name,
                 email:  data.email,
                 phoneNumber: data.phoneNumber,
                 role:data.role,
-                uid:userRecord.uid,
+                uid:data.uid,
+                status:data.status,
                 createdAt: Timestamp.now() 
             });
 
@@ -106,6 +105,35 @@ class User
             return docRef;
         } catch (error) {
             console.error('Error updating user:', error);
+            throw error;
+        }
+    }
+
+    async updateRewardStatus(uid: string, claimCode: string, newStatus: string) {
+        try {
+            const usersRef = connectiondb.collection("users");
+            const snapshot = await usersRef.where("uid", "==", uid).get();
+    
+            const docRef = snapshot.docs[0].ref;
+    
+            const userData = snapshot.docs[0].data();
+            const userRewards = userData.rewards || [];
+    
+            const reward = userRewards.find((reward: any) => reward.claimCode === claimCode);
+    
+            if (reward) {
+                reward.status = newStatus;
+    
+                await docRef.update({
+                    rewards: userRewards
+                });
+    
+                return { success: true, message: 'Status atualizado com sucesso.' };
+            } else {
+                throw new Error(`Reward with claimCode ${claimCode} not found.`);
+            }
+        } catch (error) {
+            console.error('Error updating reward status:', error);
             throw error;
         }
     }

@@ -14,7 +14,7 @@ interface AuthorityData {
     resolvedCases: number;
     createdAt: Timestamp;
 }
-
+ 
 class Authority
 {
     async find() { 
@@ -69,6 +69,19 @@ class Authority
         }
     }
 
-    
+    async delete(uid: string) {
+        try {
+            const docRef = connectiondb.collection("authorities").doc(uid);
+            await docRef.delete();
+
+            const docRefUser = connectiondb.collection("users").doc(uid);
+            await docRefUser.delete();
+
+            return { message: `authority with uid ${uid} successfully deleted.` };
+        } catch (error) {
+            console.error('Error deleting award:', error);
+            throw error;
+        }
+    }
 }
 export default Authority;

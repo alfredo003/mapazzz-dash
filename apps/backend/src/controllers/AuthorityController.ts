@@ -12,7 +12,7 @@ export class AuthorityController {
                 error: "Internal server error",
             });
         }
-    }
+    } 
 
     static async getById(req: Request, res: Response) {
         const {uid} = req.params;
@@ -67,4 +67,38 @@ export class AuthorityController {
         }
     }
 
+    static async delete(req: Request, res: Response)
+    {
+        try{
+            const uid = req.params.uid;
+            
+            if (!uid) {
+                return res.status(400).json({
+                    error: "Missing ID",
+                    message: "Authority ID is required"
+                });
+            }
+
+            const authority = new Authority();
+            const deleteauthority = await authority.delete(uid);
+
+            if (!deleteauthority) {
+                return res.status(404).json({
+                    error: "Not found",
+                    message: "Authority post not found"
+                });
+            }
+
+            res.status(200).json({
+                message: "Authority delete successfully",
+                award: deleteauthority
+            });
+
+        } catch (error) {
+            res.status(500).json({
+                error: "Internal server error",
+                message: "Failed to delete authority"
+            });
+        }
+    }
 }

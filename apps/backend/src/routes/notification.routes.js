@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const NotificationController_1 = require("../controllers/NotificationController");
+const notificationRoutes = (0, express_1.Router)();
+notificationRoutes.get('/', NotificationController_1.NotificationController.findAll);
+notificationRoutes.get('/fcm', NotificationController_1.NotificationController.findAllFcm);
+notificationRoutes.post('/', NotificationController_1.NotificationController.register);
+notificationRoutes.post('/send', NotificationController_1.NotificationController.sendNotification);
+exports.default = notificationRoutes;

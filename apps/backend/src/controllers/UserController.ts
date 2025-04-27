@@ -1,11 +1,13 @@
 import { Request, Response } from "express";
 import User from "../models/User";
 
+
+
 export class UserController {
 
     static async create(req: Request, res: Response) {
         try {
-            const {  name, email,phoneNumber,role, password } = req.body;
+            const {  name, email,phoneNumber,role, password,uid } = req.body;
             
             if (!name || !email || !phoneNumber || !role) {
                 return res.status(400).json({
@@ -20,7 +22,9 @@ export class UserController {
                 email,
                 phoneNumber,
                 role,
-                password
+                password,
+                uid,
+                status: 'active',
             });
 
             res.status(201).json({
@@ -148,7 +152,22 @@ export class UserController {
             });
         }
     }
-    
+    static async claimed(req: Request, res: Response) {
+        const {uid,claimcode} = req.body;
+        try {
+            const user = new User();
+            const userData =  await user.updateRewardStatus(uid, claimcode, 'claimed');;
+           
+            res.status(200).json(userData);
+        } catch (error) {
+            console.error('Error fetching reports:', error);
+            res.status(500).json({
+                error: "Internal server error",
+                message: "Failed to fetch reports"
+            });
+        }
+    }
+
     static async blockUser(req: Request, res: Response) {
         const {uid} = req.params;
         try {

@@ -14,11 +14,12 @@ class Notification
 {
     private title: string;
     private message: string;
-
-    constructor(title?:string,message?:string)
+    private token: string;
+    constructor(title?:string,message?:string,token?:string)
     {
         this.title = title || "";
         this.message = message || "";
+        this.token = token || "";
     }
     async create(notification: NotificationData) {
         try {
@@ -41,38 +42,18 @@ class Notification
     async sendPush()
     {
         try {
-         
-            const result = await this.getFCMToken(); 
-            const tokens = result[0].token;
-           
             const data = {
                 notification: {
                     title: this.title,
-                    body: this.message
+                    body: this.message,
                 },
-                token: "dLK-Tl13QFuQqJbEz6arF7:APA91bGdkJ7l-JxwWClkrV3nwx8MZg6xwcp4hwcnTs3AYxBQiKWQ67iGyAiMCRjxSAQE8_rsCbpBIezzJ_2yC9uU6QPrzjv2-IZibeNG-gLOmorn1HFYYaA"
+                token: this.token
             };
-            const res = await admin.messaging().send(data);
-            /*
-            for (const token of tokens)
-            {
-                try {  
-                   
-                    const data = {
-                        notification: {
-                            title: this.title,
-                            body: this.message
-                        },
-                        token: token
-                    };
-                    const res = await admin.messaging().send(data);
-                    console.log(`Enviado com sucesso: ${res}`);
-                } catch (error) {
-                    console.error(`Erro ao enviar o token ${token}:`, error);
-                }
-                
-            }*/
-                console.log(`Enviado com sucesso: ${res}`);
+
+            const response = await admin.messaging().send(data);
+          
+            return response;
+               
         } catch (error) {
             console.error('Error sending notification:', error);
             throw error;

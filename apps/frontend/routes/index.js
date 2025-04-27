@@ -7,6 +7,7 @@ const authoritiesRouter = require('./authorities.routes');
 const userRouter = require('./user.routes');
 const riskmapRoutes = require('./riskmap.routes');
 const notificationRoutes = require('./notification.routes')
+const claimRouter = require('./claim.routes');
 
 const { authenticateUser } = require('../middleware/auth');
 
@@ -21,6 +22,7 @@ router.use('/instituicoes', authenticateUser, authoritiesRouter);
 router.use('/notificacoes', authenticateUser, notificationRoutes);
 router.use('/users', authenticateUser, userRouter);
 router.use('/mapa_risco', authenticateUser, riskmapRoutes);
+router.use('/reivindicar', authenticateUser, claimRouter);
 
 module.exports = router;
 

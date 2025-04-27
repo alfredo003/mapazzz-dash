@@ -50,14 +50,7 @@ export class BlogController {
                 title
             });
 
-            const dataNofity = {
-                title:"Novo Blog",
-                message:title
-            }
-           
-            const resultNotify = (new Notification(dataNofity.title,dataNofity.message))
-            await resultNotify.sendPush();
-            
+
             res.status(201).json({
                 message: "Authority created successfully",
                 blogs

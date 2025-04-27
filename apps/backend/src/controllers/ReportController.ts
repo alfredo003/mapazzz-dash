@@ -15,6 +15,21 @@ export class ReportController {
             });
         }
     }
+
+    static async getAllZones(req: Request, res: Response) {
+        try {
+            const report = new Report();
+            const zones = await report.findAllZonas();
+            res.status(200).json({ zones });
+        } catch (error) {
+            console.error('Error fetching reports:', error);
+            res.status(500).json({
+                error: "Internal server error",
+                message: "Failed to fetch reports"
+            });
+        }
+    }
+
     static async getAllReportsByStatus(req: Request, res: Response) {
         const {status} = req.params;
         try {

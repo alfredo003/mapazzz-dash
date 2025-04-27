@@ -40,6 +40,20 @@ class Report
         return snapshot;
     }
 
+    async findAllZonas() {
+       
+        const snapshot = await connectiondb.collection("zones")
+            .get();
+
+        return snapshot.docs.map((doc: QueryDocumentSnapshot) => {
+            const data = doc.data();
+            return {
+                ...data,
+                uid: doc.id
+            };
+        });
+    }
+
     async findZones() {
        
         const snapshot = await connectiondb.collection("zones")
